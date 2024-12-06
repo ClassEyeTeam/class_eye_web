@@ -84,7 +84,7 @@ export const departmentColumns: ColumnDef<Department>[] = [
               itemType="Department"
               onCancel={() => setIsDeleteDialogOpen(false)}
               onConfirm={() => {
-                dispatch(deleteDepartment(Number(row.original.id)));
+                dispatch(deleteDepartment(row.original.id));
                 setIsDeleteDialogOpen(false);
               }}
             />

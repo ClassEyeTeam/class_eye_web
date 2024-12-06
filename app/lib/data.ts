@@ -17,10 +17,29 @@ export const LeftBarData = {
   },
   navMain: [
     {
+      title: "University",
+      url: "#",
+      icon: BookOpen,
+      isActive: true,
+      items: [
+        {
+          title: "Departments",
+          url: "/university/department",
+        },
+        {
+          title: "Teachers",
+          url: "/university/teacher",
+        },
+        {
+          title: "Class",
+          url: "/university/class",
+        },
+      ],
+    },
+    {
       title: "Playground",
       url: "#",
       icon: SquareTerminal,
-      isActive: true,
       items: [
         {
           title: "History",
@@ -55,29 +74,7 @@ export const LeftBarData = {
         },
       ],
     },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
+
     {
       title: "Settings",
       url: "#",

@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import departmentSlice from "~/store/departmentSlice";
 import { rtkQueryErrorLogger } from "./middleware";
+import teacherSlice from "./teacherSlice";
 // ...
 
 export const store = configureStore({
   reducer: {
     departments: departmentSlice,
+    teachers: teacherSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(rtkQueryErrorLogger),

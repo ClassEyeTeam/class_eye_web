@@ -46,7 +46,6 @@ export const getDepartments = createAsyncThunk(
 export const updateDepartment = createAsyncThunk(
   "departments/updateDepartment",
   async (department: Department, { rejectWithValue }) => {
-    console.log(department);
     try {
       const response = await axios.put(
         `${API_ENDPOINT}/${department.id}`,
@@ -138,7 +137,7 @@ const departmentsSlice = createSlice({
       .addCase(deleteDepartment.fulfilled, (state, action) => {
         state.loading = false;
         state.departments = state.departments.filter(
-          (dept) => dept.id !== action.payload.toString()
+          (dept) => dept.id !== action.payload
         );
       })
       .addCase(deleteDepartment.rejected, (state, action) => {

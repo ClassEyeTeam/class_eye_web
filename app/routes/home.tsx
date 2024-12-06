@@ -14,18 +14,8 @@ import { useEffect, useState } from "react";
 import { SidebarLeft } from "~/components/nav-bar/sidebar-left";
 import { SidebarRight } from "~/components/nav-bar/sidebar-right";
 
-import { UniversalDialog } from "~/components/dialog";
-import { DepartmentForm } from "~/components/forms/department-form";
 import { ModeToggle } from "~/components/nav-bar/mode-toggle";
-import { DataTable } from "~/components/table/data-table";
-import { departmentColumns } from "~/components/table/department-columns";
-import { Button } from "~/components/ui/button";
-import { toast } from "~/hooks/use-toast";
-import {
-  addDepartment,
-  DepartmentsState,
-  getDepartments,
-} from "~/store/departmentSlice";
+import { DepartmentsState, getDepartments } from "~/store/departmentSlice";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 
 export default function Page() {
@@ -60,29 +50,8 @@ export default function Page() {
           <ModeToggle />
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4">
-          <DataTable
-            columns={departmentColumns}
-            data={departments}
-            filterColumn="name"
-            createElement={
-              <UniversalDialog
-                trigger={<Button>Create New Department</Button>}
-                title="Create Department"
-                isOpen={isEditDialogOpen}
-                onOpenChange={setIsEditDialogOpen}
-              >
-                <DepartmentForm
-                  onSubmit={(values) => {
-                    dispatch(addDepartment(values));
-                    setIsEditDialogOpen(false);
-                  }}
-                />
-              </UniversalDialog>
-            }
-          />
-
-          {/* <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-muted/50" />
-          <div className="mx-auto h-[100vh] w-full max-w-3xl rounded-xl bg-muted/50" /> */}
+          <div className="mx-auto h-24 w-full max-w-3xl rounded-xl bg-muted/50" />
+          <div className="mx-auto h-[100vh] w-full max-w-3xl rounded-xl bg-muted/50" />
         </div>
       </SidebarInset>
       <SidebarRight />
