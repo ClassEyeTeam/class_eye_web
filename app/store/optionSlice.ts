@@ -1,18 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { Teacher, TeacherRequest } from "~/lib/types";
+import { Option, OptionRequest } from "~/lib/types";
 
-export interface TeachersState {
-  teachers: Teacher[];
+export interface OptionsState {
+  options: Option[];
   loading: boolean;
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/teachers`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/options`;
 
-// Async thunk to get teachers
-export const getTeachers = createAsyncThunk(
-  "teachers/getTeachers",
+// Async thunk to get options
+export const getOptions = createAsyncThunk(
+  "options/getOptions",
   async (_, { rejectWithValue }) => {
     try {
       const response = await axios.get(API_ENDPOINT);
@@ -26,12 +26,12 @@ export const getTeachers = createAsyncThunk(
   }
 );
 
-// Async thunk to add a teacher
-export const addTeacher = createAsyncThunk(
-  "teachers/addTeacher",
-  async (teacher: Partial<Teacher>, { rejectWithValue }) => {
+// Async thunk to add an option
+export const addOption = createAsyncThunk(
+  "options/addOption",
+  async (option: Partial<Option>, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_ENDPOINT, teacher);
+      const response = await axios.post(API_ENDPOINT, option);
       return response.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
@@ -42,14 +42,14 @@ export const addTeacher = createAsyncThunk(
   }
 );
 
-// Async thunk to update a teacher
-export const updateTeacher = createAsyncThunk(
-  "teachers/updateTeacher",
-  async (updatedTeacher: TeacherRequest, { rejectWithValue }) => {
+// Async thunk to update an option
+export const updateOption = createAsyncThunk(
+  "options/updateOption",
+  async (updatedOption: OptionRequest, { rejectWithValue }) => {
     try {
       const response = await axios.put(
-        `${API_ENDPOINT}/${updatedTeacher.id}`,
-        updatedTeacher
+        `${API_ENDPOINT}/${updatedOption.id}`,
+        updatedOption
       );
       return response.data;
     } catch (error) {
@@ -61,9 +61,9 @@ export const updateTeacher = createAsyncThunk(
   }
 );
 
-// Async thunk to delete a teacher
-export const deleteTeacher = createAsyncThunk(
-  "teachers/deleteTeacher",
+// Async thunk to delete an option
+export const deleteOption = createAsyncThunk(
+  "options/deleteOption",
   async (id: number, { rejectWithValue }) => {
     try {
       await axios.delete(`${API_ENDPOINT}/${id}`);
@@ -77,72 +77,72 @@ export const deleteTeacher = createAsyncThunk(
   }
 );
 
-const teachersSlice = createSlice({
-  name: "teachers",
+const optionsSlice = createSlice({
+  name: "options",
   initialState: {
-    teachers: [] as Teacher[],
+    options: [] as Option[],
     loading: false,
     error: null,
-  } as TeachersState,
+  } as OptionsState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getTeachers.pending, (state) => {
+      .addCase(getOptions.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getTeachers.fulfilled, (state, action) => {
+      .addCase(getOptions.fulfilled, (state, action) => {
         state.loading = false;
-        state.teachers = action.payload;
+        state.options = action.payload;
       })
-      .addCase(getTeachers.rejected, (state, action) => {
+      .addCase(getOptions.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(addTeacher.pending, (state) => {
+      .addCase(addOption.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(addTeacher.fulfilled, (state, action) => {
+      .addCase(addOption.fulfilled, (state, action) => {
         state.loading = false;
-        state.teachers.push(action.payload);
+        state.options.push(action.payload);
       })
-      .addCase(addTeacher.rejected, (state, action) => {
+      .addCase(addOption.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(updateTeacher.pending, (state) => {
+      .addCase(updateOption.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(updateTeacher.fulfilled, (state, action) => {
+      .addCase(updateOption.fulfilled, (state, action) => {
         state.loading = false;
-        const index = state.teachers.findIndex(
-          (teacher) => teacher.id === action.payload.id
+        const index = state.options.findIndex(
+          (option) => option.id === action.payload.id
         );
         if (index !== -1) {
-          state.teachers[index] = action.payload;
+          state.options[index] = action.payload;
         }
       })
-      .addCase(updateTeacher.rejected, (state, action) => {
+      .addCase(updateOption.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(deleteTeacher.pending, (state) => {
+      .addCase(deleteOption.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(deleteTeacher.fulfilled, (state, action) => {
+      .addCase(deleteOption.fulfilled, (state, action) => {
         state.loading = false;
-        state.teachers = state.teachers.filter(
-          (teacher) => teacher.id !== action.payload
+        state.options = state.options.filter(
+          (option) => option.id !== action.payload
         );
       })
-      .addCase(deleteTeacher.rejected, (state, action) => {
+      .addCase(deleteOption.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });
   },
 });
 
-export default teachersSlice.reducer;
+export default optionsSlice.reducer;

@@ -8,8 +8,7 @@ export interface DepartmentsState {
   error: string | null;
 }
 
-const API_ENDPOINT = "http://localhost:8081/departments";
-
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/modules`;
 // Async thunk to add a department
 export const addDepartment = createAsyncThunk(
   "departments/addDepartment",

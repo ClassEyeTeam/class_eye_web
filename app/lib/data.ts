@@ -31,8 +31,12 @@ export const LeftBarData = {
           url: "/university/teacher",
         },
         {
-          title: "Class",
-          url: "/university/class",
+          title: "Options",
+          url: "/university/option",
+        },
+        {
+          title: "Module",
+          url: "/university/module",
         },
       ],
     },

@@ -8,70 +8,61 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-import { TeacherRequest } from "~/lib/types";
-import { DepartmentsState, getDepartments } from "~/store/departmentSlice";
-import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import { DepartmentsState, getDepartments } from "~/store/departmentSlice";
+import { useAppDispatch, useAppSelector } from "~/store/hooks";
 
 const formSchema = z.object({
   name: z.string().min(2, {
-    message: "Teacher name must be at least 2 characters.",
+    message: "Option name must be at least 2 characters.",
   }),
-  email: z.string().email({
-    message: "Invalid email address.",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 characters.",
-  }),
-  address: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
+  description: z.string().min(10, {
+    message: "Description must be at least 10 characters.",
   }),
   departmentId: z.number({
     required_error: "Please select a department.",
   }),
 });
 
-type TeacherFormData = z.infer<typeof formSchema>;
+type OptionFormData = z.infer<typeof formSchema>;
 
-interface TeacherFormProps {
-  teacher?: TeacherRequest;
-  onSubmit: (values: TeacherFormData) => void;
+interface OptionFormProps {
+  option?: OptionFormData;
+  onSubmit: (values: OptionFormData) => void;
 }
 
-const TeacherForm: React.FC<TeacherFormProps> = ({ teacher, onSubmit }) => {
-  const form = useForm<TeacherFormData>({
+const OptionForm: React.FC<OptionFormProps> = ({ option, onSubmit }) => {
+  const form = useForm<OptionFormData>({
     resolver: zodResolver(formSchema),
-    defaultValues: teacher || {
+    defaultValues: option || {
       name: "",
-      email: "",
-      phone: "",
-      address: "",
-      departmentId: undefined,
+      description: "",
+      departmentId: 0,
     },
   });
 
+  const dispatch = useAppDispatch();
   const { departments } = useAppSelector(
     (state: { departments: DepartmentsState }) => state.departments
   );
-  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(getDepartments());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="name"
@@ -79,7 +70,7 @@ const TeacherForm: React.FC<TeacherFormProps> = ({ teacher, onSubmit }) => {
             <FormItem>
               <FormLabel>Name</FormLabel>
               <FormControl>
-                <Input placeholder="Teacher name" {...field} />
+                <Input placeholder="Option name" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -87,38 +78,12 @@ const TeacherForm: React.FC<TeacherFormProps> = ({ teacher, onSubmit }) => {
         />
         <FormField
           control={form.control}
-          name="email"
+          name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input placeholder="Teacher email" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="phone"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone</FormLabel>
-              <FormControl>
-                <Input placeholder="Teacher phone" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="address"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Address</FormLabel>
-              <FormControl>
-                <Input placeholder="Teacher address" {...field} />
+                <Input placeholder="Option description" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -151,7 +116,7 @@ const TeacherForm: React.FC<TeacherFormProps> = ({ teacher, onSubmit }) => {
                   </Select>
                 ) : (
                   <p className="text-sm text-destructive">
-                    No departments available !
+                    No departments available!
                   </p>
                 )}
               </FormControl>
@@ -165,4 +130,4 @@ const TeacherForm: React.FC<TeacherFormProps> = ({ teacher, onSubmit }) => {
   );
 };
 
-export default TeacherForm;
+export default OptionForm;

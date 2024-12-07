@@ -1,40 +1,39 @@
 import { useEffect, useState } from "react";
 import { UniversalDialog } from "~/components/dialog";
-import TeacherForm from "~/components/forms/teacher-form";
+import OptionForm from "~/components/forms/option-form";
 import { DataTable } from "~/components/table/data-table";
-import { teacherColumns } from "~/components/table/teacher-columns";
+import { optionColumns } from "~/components/table/option-columns";
 import { Button } from "~/components/ui/button";
-import { DepartmentsState } from "~/store/departmentSlice";
 
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
-import { addTeacher, getTeachers, TeachersState } from "~/store/teacherSlice";
+import { addOption, getOptions, OptionsState } from "~/store/optionSlice";
 
-const TeacherPage = () => {
+const OptionPage = () => {
   const dispatch = useAppDispatch();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const { teachers, loading, error } = useAppSelector(
-    (state: { teachers: TeachersState; departments: DepartmentsState }) =>
-      state.teachers
+  const { options, loading, error } = useAppSelector(
+    (state: { options: OptionsState }) => state.options
   );
 
   useEffect(() => {
-    dispatch(getTeachers());
+    dispatch(getOptions());
   }, [dispatch]);
+
   return (
     <DataTable
-      columns={teacherColumns}
-      data={teachers}
+      columns={optionColumns}
+      data={options}
       filterColumn="name"
       createElement={
         <UniversalDialog
-          trigger={<Button>Create New Teacher</Button>}
-          title="Create Teacher"
+          trigger={<Button>Create New Option</Button>}
+          title="Create Option"
           isOpen={isEditDialogOpen}
           onOpenChange={setIsEditDialogOpen}
         >
-          <TeacherForm
+          <OptionForm
             onSubmit={(values) => {
-              dispatch(addTeacher(values));
+              dispatch(addOption(values));
               setIsEditDialogOpen(false);
             }}
           />
@@ -44,4 +43,4 @@ const TeacherPage = () => {
   );
 };
 
-export default TeacherPage;
+export default OptionPage;

@@ -4,6 +4,12 @@ export interface Department {
   description: string;
 }
 
+export interface Module {
+  id: number;
+  name: string;
+  description: string;
+}
+
 export interface Teacher {
   id: number;
   name: string;
@@ -12,6 +18,18 @@ export interface Teacher {
   address: string;
   department: Department;
 }
+
+export interface Option {
+  id: number;
+  name: string;
+  description: string;
+  department: Department;
+}
+
 export type TeacherRequest = Omit<Teacher, "department"> & {
+  departmentId: number;
+};
+
+export type OptionRequest = Omit<Option, "department"> & {
   departmentId: number;
 };

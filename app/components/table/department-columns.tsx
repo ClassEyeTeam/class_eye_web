@@ -72,7 +72,7 @@ export const departmentColumns: ColumnDef<Department>[] = [
                 size="icon"
                 onClick={() => setIsDeleteDialogOpen(true)}
               >
-                <Trash2 className="h-4 w-4" />
+                <Trash2 className="h-4 w-4" color="red" />
               </Button>
             }
             title="Edit Department"

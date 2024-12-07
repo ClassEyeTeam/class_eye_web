@@ -2,14 +2,14 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
-import { Teacher } from "~/lib/types";
+import { Option } from "~/lib/types";
 import { useAppDispatch } from "~/store/hooks";
-import { deleteTeacher, updateTeacher } from "~/store/teacherSlice";
+import { deleteOption, updateOption } from "~/store/optionSlice";
 import { DeleteConfirmation } from "../delete-confirmation";
 import { UniversalDialog } from "../dialog";
-import TeacherForm from "../forms/teacher-form";
+import OptionForm from "../forms/option-form";
 
-export const teacherColumns: ColumnDef<Teacher>[] = [
+export const optionColumns: ColumnDef<Option>[] = [
   {
     accessorKey: "id",
     header: "ID",
@@ -29,16 +29,8 @@ export const teacherColumns: ColumnDef<Teacher>[] = [
     },
   },
   {
-    accessorKey: "email",
-    header: "Email",
-  },
-  {
-    accessorKey: "phone",
-    header: "Phone",
-  },
-  {
-    accessorKey: "address",
-    header: "Address",
+    accessorKey: "description",
+    header: "Description",
   },
   {
     accessorKey: "departmentId",
@@ -61,7 +53,7 @@ export const teacherColumns: ColumnDef<Teacher>[] = [
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const teacher = row.original;
+      const option = row.original;
       const dispatch = useAppDispatch();
       const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
       const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -77,19 +69,19 @@ export const teacherColumns: ColumnDef<Teacher>[] = [
                 <Pencil className="h-4 w-4" />
               </Button>
             }
-            title="Edit Teacher"
+            title="Edit Option"
             isOpen={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}
           >
-            <TeacherForm
-              teacher={{
-                ...teacher,
-                departmentId: teacher.department.id,
+            <OptionForm
+              option={{
+                ...option,
+                departmentId: option.department.id,
               }}
               // Pass the departments prop here
               onSubmit={(values) => {
                 dispatch(
-                  updateTeacher({
+                  updateOption({
                     ...values,
                     id: row.original.id,
                     departmentId: values.departmentId, // TODO :to demonstrate the change in cicd pipeline
@@ -116,10 +108,10 @@ export const teacherColumns: ColumnDef<Teacher>[] = [
           >
             <DeleteConfirmation
               itemName={row.original.name}
-              itemType="Teacher"
+              itemType="Option"
               onCancel={() => setIsDeleteDialogOpen(false)}
               onConfirm={() => {
-                dispatch(deleteTeacher(row.original.id));
+                dispatch(deleteOption(row.original.id));
                 setIsDeleteDialogOpen(false);
               }}
             />

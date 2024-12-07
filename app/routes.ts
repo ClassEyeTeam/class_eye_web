@@ -10,5 +10,7 @@ export default [
   layout("routes/university/layout.tsx", [
     route("university/department", "routes/university/department.tsx"),
     route("university/teacher", "routes/university/teacher.tsx"),
+    route("university/option", "routes/university/option.tsx"),
+    route("university/module", "routes/university/module.tsx"),
   ]),
 ] satisfies RouteConfig;
