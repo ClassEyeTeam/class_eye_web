@@ -34,6 +34,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
   filterColumn?: string;
   createElement: React.ReactNode;
+  filterComponent?: React.ReactNode; // New prop for filter components
 }
 
 export function DataTable<TData, TValue>({
@@ -41,6 +42,7 @@ export function DataTable<TData, TValue>({
   data,
   filterColumn,
   createElement,
+  filterComponent, // Add the new prop
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -68,7 +70,10 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="w-full">
-      <div className="flex items-center py-4">
+      <div className="flex items-center py-4 gap-4">
+        {/* Add the filter component before the search input */}
+        {filterComponent}
+
         {filterColumn && (
           <Input
             placeholder={`Filter ${filterColumn}...`}

@@ -33,3 +33,17 @@ export type TeacherRequest = Omit<Teacher, "department"> & {
 export type OptionRequest = Omit<Option, "department"> & {
   departmentId: number;
 };
+
+export interface OptionModuleTeacher {
+  id: number;
+  option: Option;
+  module: Module;
+  teacher: Teacher;
+}
+
+export interface OptionModuleTeacherRequest {
+  id: number;
+  optionId: number;
+  moduleId: number;
+  teacherId: number;
+}

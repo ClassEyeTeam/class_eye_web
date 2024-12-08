@@ -18,7 +18,7 @@ export const LeftBarData = {
   navMain: [
     {
       title: "University",
-      url: "#",
+      url: "/",
       icon: BookOpen,
       isActive: true,
       items: [
@@ -37,6 +37,10 @@ export const LeftBarData = {
         {
           title: "Module",
           url: "/university/module",
+        },
+        {
+          title: "Assignment",
+          url: "/university/assignment",
         },
       ],
     },

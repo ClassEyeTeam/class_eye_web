@@ -20,6 +20,7 @@ const TeacherPage = () => {
   useEffect(() => {
     dispatch(getTeachers());
   }, [dispatch]);
+
   return (
     <DataTable
       columns={teacherColumns}

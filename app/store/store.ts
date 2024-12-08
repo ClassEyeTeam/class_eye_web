@@ -4,6 +4,7 @@ import { rtkQueryErrorLogger } from "./middleware";
 import teacherSlice from "./teacherSlice";
 import optionSlice from "./optionSlice";
 import moduleSlice from "./moduleSlice";
+import moduleOptionSlice from "./moduleOptionSlice";
 // ...
 
 export const store = configureStore({
@@ -12,6 +13,7 @@ export const store = configureStore({
     teachers: teacherSlice,
     options: optionSlice,
     modules: moduleSlice,
+    moduleOption: moduleOptionSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(rtkQueryErrorLogger),
