@@ -47,3 +47,11 @@ export interface OptionModuleTeacherRequest {
   moduleId: number;
   teacherId: number;
 }
+
+export interface Student {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  optionId: number;
+}

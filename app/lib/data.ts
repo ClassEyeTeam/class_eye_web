@@ -50,8 +50,8 @@ export const LeftBarData = {
       icon: SquareTerminal,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Students",
+          url: "/students",
         },
         {
           title: "Starred",

@@ -16,5 +16,6 @@ export default [
     route("university/option", "routes/university/option.tsx"),
     route("university/module", "routes/university/module.tsx"),
     route("university/assignment", "routes/university/assignment.tsx"),
+    route("students", "routes/students/students.tsx"),
   ]),
 ] satisfies RouteConfig;
