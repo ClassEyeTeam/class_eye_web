@@ -55,3 +55,26 @@ export interface Student {
   email: string;
   optionId: number;
 }
+export interface Block {
+  id: number;
+  name: string;
+  description: string;
+  // rooms: Room[];
+}
+
+export interface Room {
+  id: number;
+  name: string;
+  capacity: number;
+  roomType: RoomType;
+  block: Block;
+}
+
+export type RoomRequest = Omit<Room, "block"> & {
+  blockId: number;
+};
+
+export enum RoomType {
+  AMPHITHEATER = "AMPHITHEATER",
+  CLASSROOM = "CLASSROOM",
+}

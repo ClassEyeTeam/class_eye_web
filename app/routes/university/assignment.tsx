@@ -69,65 +69,63 @@ const OptionModuleTeacherPage = () => {
   );
 
   return (
-    <div>
-      <DataTable
-        columns={optionModuleTeacherColumns}
-        data={filteredData}
-        // filterColumn="option"
-        filterComponent={
-          <div className="flex space-x-2">
-            <Select onValueChange={setSelectedOption}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select an option" />
-              </SelectTrigger>
-              <SelectContent>
-                <div className="p-2">
-                  <Input
-                    placeholder="Search options"
-                    value={searchOption}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setSearchOption(e.target.value)
-                    }
-                    className="mb-2"
-                  />
-                </div>
-                {filteredOptions.map((option) => (
-                  <SelectItem key={option.id} value={option.id.toString()}>
-                    {option.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        }
-        createElement={
-          <UniversalDialog
-            trigger={
-              <Button disabled={!selectedOption}>Create Assignment</Button>
-            }
-            title="Create Option Module Teacher"
-            isOpen={isEditDialogOpen}
-            onOpenChange={setIsEditDialogOpen}
-          >
-            <OptionModuleTeacherForm
-              onSubmit={(values) => {
-                if (selectedOption) {
-                  dispatch(
-                    addOptionModuleTeacher({
-                      ...values,
-                      optionId: Number(selectedOption),
-                    })
-                  );
-                  setIsEditDialogOpen(false);
-                } else {
-                  alert("Please select an option before submitting.");
-                }
-              }}
-            />
-          </UniversalDialog>
-        }
-      />
-    </div>
+    <DataTable
+      columns={optionModuleTeacherColumns}
+      data={filteredData}
+      // filterColumn="option"
+      filterComponent={
+        <div className="flex space-x-2">
+          <Select onValueChange={setSelectedOption}>
+            <SelectTrigger>
+              <SelectValue placeholder="Select an option" />
+            </SelectTrigger>
+            <SelectContent>
+              <div className="p-2">
+                <Input
+                  placeholder="Search options"
+                  value={searchOption}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setSearchOption(e.target.value)
+                  }
+                  className="mb-2"
+                />
+              </div>
+              {filteredOptions.map((option) => (
+                <SelectItem key={option.id} value={option.id.toString()}>
+                  {option.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+      }
+      createElement={
+        <UniversalDialog
+          trigger={
+            <Button disabled={!selectedOption}>Create Assignment</Button>
+          }
+          title="Create Option Module Teacher"
+          isOpen={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+        >
+          <OptionModuleTeacherForm
+            onSubmit={(values) => {
+              if (selectedOption) {
+                dispatch(
+                  addOptionModuleTeacher({
+                    ...values,
+                    optionId: Number(selectedOption),
+                  })
+                );
+                setIsEditDialogOpen(false);
+              } else {
+                alert("Please select an option before submitting.");
+              }
+            }}
+          />
+        </UniversalDialog>
+      }
+    />
   );
 };
 

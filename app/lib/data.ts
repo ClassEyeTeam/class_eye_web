@@ -23,6 +23,14 @@ export const LeftBarData = {
       isActive: true,
       items: [
         {
+          title: "Blocks",
+          url: "/university/block",
+        },
+        {
+          title: "Rooms",
+          url: "/university/room",
+        },
+        {
           title: "Departments",
           url: "/university/department",
         },
