@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { isAxiosError } from "axios";
+import api from "~/lib/axios";
 import { OptionModuleTeacher, OptionModuleTeacherRequest } from "~/lib/types";
 
 export interface OptionModuleTeachersState {
@@ -8,19 +9,17 @@ export interface OptionModuleTeachersState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${
-  import.meta.env.VITE_API_URL_UNIVERSITY
-}/module-options`;
+const API_ENDPOINT = `UNIVERSITY-SERVICE/module-options`;
 
 // Async thunk to get optionModuleTeachers
 export const getOptionModuleTeachers = createAsyncThunk(
   "optionModuleTeachers/getOptionModuleTeachers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_ENDPOINT);
+      const response = await api.get(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -36,10 +35,10 @@ export const addOptionModuleTeacher = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(API_ENDPOINT, optionModuleTeacher);
+      const response = await api.post(API_ENDPOINT, optionModuleTeacher);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -55,13 +54,13 @@ export const updateOptionModuleTeacher = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `${API_ENDPOINT}/${updatedOptionModuleTeacher.id}`,
         updatedOptionModuleTeacher
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -74,10 +73,10 @@ export const deleteOptionModuleTeacher = createAsyncThunk(
   "optionModuleTeachers/deleteOptionModuleTeacher",
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
+      await api.delete(`${API_ENDPOINT}/${id}`);
       return id;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;

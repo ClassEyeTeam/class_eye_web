@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { isAxiosError } from "axios";
+import api from "~/lib/axios";
 import { Room, RoomRequest } from "~/lib/types";
 
 export interface RoomsState {
@@ -14,10 +15,10 @@ export const fetchRooms = createAsyncThunk(
   "rooms/fetchRooms",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get<Room[]>(API_ENDPOINT);
+      const response = await api.get<Room[]>(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -29,10 +30,10 @@ export const addRoom = createAsyncThunk(
   "rooms/addRoom",
   async (room: Omit<RoomRequest, "id">, { rejectWithValue }) => {
     try {
-      const response = await axios.post<Room>(API_ENDPOINT, room);
+      const response = await api.post<Room>(API_ENDPOINT, room);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -44,13 +45,13 @@ export const updateRoom = createAsyncThunk(
   "rooms/updateRoom",
   async (room: RoomRequest, { rejectWithValue }) => {
     try {
-      const response = await axios.put<Room>(
+      const response = await api.put<Room>(
         `${API_ENDPOINT}/${room.id}`,
         room
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -62,10 +63,10 @@ export const deleteRoom = createAsyncThunk(
   "rooms/deleteRoom",
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
+      await api.delete(`${API_ENDPOINT}/${id}`);
       return id;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;

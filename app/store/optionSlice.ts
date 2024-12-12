@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { isAxiosError } from "axios";
+import api from "~/lib/axios"; // Import configured axios instance
 import { Option, OptionRequest } from "~/lib/types";
 
 export interface OptionsState {
@@ -8,17 +9,17 @@ export interface OptionsState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/options`;
+const API_ENDPOINT = `UNIVERSITY-SERVICE/options`;
 
 // Async thunk to get options
 export const getOptions = createAsyncThunk(
   "options/getOptions",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_ENDPOINT);
+      const response = await api.get(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -31,10 +32,10 @@ export const addOption = createAsyncThunk(
   "options/addOption",
   async (option: Partial<Option>, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_ENDPOINT, option);
+      const response = await api.post(API_ENDPOINT, option);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -47,13 +48,13 @@ export const updateOption = createAsyncThunk(
   "options/updateOption",
   async (updatedOption: OptionRequest, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `${API_ENDPOINT}/${updatedOption.id}`,
         updatedOption
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -66,10 +67,10 @@ export const deleteOption = createAsyncThunk(
   "options/deleteOption",
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
+      await api.delete(`${API_ENDPOINT}/${id}`);
       return id;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;

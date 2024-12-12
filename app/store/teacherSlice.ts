@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { Teacher, TeacherRequest } from "~/lib/types";
-
+import api from "~/lib/axios"; // Import configured axios instance
+import { isAxiosError } from "axios";
 export interface TeachersState {
   teachers: Teacher[];
   loading: boolean;
@@ -15,10 +15,10 @@ export const getTeachers = createAsyncThunk(
   "teachers/getTeachers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_ENDPOINT);
+      const response = await api.get(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -31,10 +31,10 @@ export const addTeacher = createAsyncThunk(
   "teachers/addTeacher",
   async (teacher: Partial<Teacher>, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_ENDPOINT, teacher);
+      const response = await api.post(API_ENDPOINT, teacher);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -47,13 +47,13 @@ export const updateTeacher = createAsyncThunk(
   "teachers/updateTeacher",
   async (updatedTeacher: TeacherRequest, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `${API_ENDPOINT}/${updatedTeacher.id}`,
         updatedTeacher
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -66,10 +66,10 @@ export const deleteTeacher = createAsyncThunk(
   "teachers/deleteTeacher",
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
+      await api.delete(`${API_ENDPOINT}/${id}`);
       return id;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;

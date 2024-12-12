@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import axios from "axios";
+import { isAxiosError } from "axios";
+import api from "~/lib/axios";
 import { Student } from "~/lib/types";
 
 export interface StudentState {
@@ -19,10 +20,10 @@ export const getStudents = createAsyncThunk(
   "students/getStudents",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get<Student[]>(API_ENDPOINT);
+      const response = await api.get<Student[]>(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -34,12 +35,12 @@ export const getStudentsByOptionId = createAsyncThunk(
   "students/getStudentsByOptionId",
   async (optionId: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get<Student[]>(
+      const response = await api.get<Student[]>(
         `${API_ENDPOINT}/option/${optionId}`
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -51,10 +52,10 @@ export const addStudent = createAsyncThunk(
   "students/addStudent",
   async (newStudent: Partial<Student>, { rejectWithValue }) => {
     try {
-      const response = await axios.post<Student>(API_ENDPOINT, newStudent);
+      const response = await api.post<Student>(API_ENDPOINT, newStudent);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -66,13 +67,13 @@ export const updateStudent = createAsyncThunk(
   "students/updateStudent",
   async (updatedStudent: Student, { rejectWithValue }) => {
     try {
-      const response = await axios.put<Student>(
+      const response = await api.put<Student>(
         `${API_ENDPOINT}/${updatedStudent.optionId}`,
         updatedStudent
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -84,10 +85,10 @@ export const deleteStudent = createAsyncThunk(
   "students/deleteStudent",
   async (studentId: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${studentId}`);
+      await api.delete(`${API_ENDPOINT}/${studentId}`);
       return studentId;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
