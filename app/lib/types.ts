@@ -78,3 +78,28 @@ export enum RoomType {
   AMPHITHEATER = "AMPHITHEATER",
   CLASSROOM = "CLASSROOM",
 }
+
+export type DayOfWeek =
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday";
+
+export interface Session {
+  id: string;
+  dayOfWeek: DayOfWeek;
+  startTime: string;
+  endTime: string;
+  moduleName: string;
+  teacher: string;
+  studentGroup: string;
+}
+
+export interface CalendarConfig {
+  startHour: number;
+  endHour: number;
+  daysToShow: DayOfWeek[];
+}
