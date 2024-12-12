@@ -8,7 +8,7 @@ export interface OptionsState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/options`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/options`;
 
 // Async thunk to get options
 export const getOptions = createAsyncThunk(

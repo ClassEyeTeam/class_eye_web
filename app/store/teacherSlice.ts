@@ -8,7 +8,7 @@ export interface TeachersState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/teachers`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/teachers`;
 
 // Async thunk to get teachers
 export const getTeachers = createAsyncThunk(

@@ -2,11 +2,6 @@ import axios from "axios";
 
 const API_ENDPOINT = `http://localhost:8088/UNIVERSITY-SERVICE/departments`;
 
-// interface Department {
-//   name: string;
-//   description: string;
-// }
-
 const departments = [
   { name: "Computer Science", description: "Department of Computer Science" },
   { name: "Mathematics", description: "Department of Mathematics" },

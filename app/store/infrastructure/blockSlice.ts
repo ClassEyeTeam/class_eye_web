@@ -8,7 +8,7 @@ export interface BlocksState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/blocks`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_CLASS}/blocks`;
 
 export const fetchBlocks = createAsyncThunk(
   "blocks/fetchBlocks",

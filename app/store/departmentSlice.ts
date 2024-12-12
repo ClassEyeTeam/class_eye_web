@@ -8,11 +8,12 @@ export interface DepartmentsState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/departments`;
-// Async thunk to add a department
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/departments`;
+
 export const addDepartment = createAsyncThunk(
   "departments/addDepartment",
   async (department: { name: string }, { rejectWithValue }) => {
+    console.log(API_ENDPOINT);
     try {
       const response = await axios.post(API_ENDPOINT, department);
       return response.data;

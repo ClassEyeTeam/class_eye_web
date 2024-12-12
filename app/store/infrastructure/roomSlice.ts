@@ -8,7 +8,7 @@ export interface RoomsState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/rooms`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_CLASS}/rooms`;
 
 export const fetchRooms = createAsyncThunk(
   "rooms/fetchRooms",

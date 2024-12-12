@@ -8,7 +8,7 @@ export interface ModulesState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL}/modules`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/modules`;
 // Async thunk to get modules
 export const getModules = createAsyncThunk(
   "modules/getModules",
