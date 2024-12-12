@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { isAxiosError } from "axios";
+import api from "~/lib/axios"; 
 import { Department } from "~/lib/types";
 
 export interface DepartmentsState {
@@ -8,17 +9,17 @@ export interface DepartmentsState {
   error: string | null;
 }
 
-const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/departments`;
+const API_ENDPOINT = `UNIVERSITY-SERVICE/departments`;
 
 export const addDepartment = createAsyncThunk(
   "departments/addDepartment",
   async (department: { name: string }, { rejectWithValue }) => {
     console.log(API_ENDPOINT);
     try {
-      const response = await axios.post(API_ENDPOINT, department);
+      const response = await api.post(API_ENDPOINT, department);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -31,10 +32,10 @@ export const getDepartments = createAsyncThunk(
   "departments/getDepartments",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_ENDPOINT);
+      const response = await api.get(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -47,13 +48,13 @@ export const updateDepartment = createAsyncThunk(
   "departments/updateDepartment",
   async (department: Department, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `${API_ENDPOINT}/${department.id}`,
         department
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -66,10 +67,10 @@ export const deleteDepartment = createAsyncThunk(
   "departments/deleteDepartment",
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
+      await api.delete(`${API_ENDPOINT}/${id}`);
       return id;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
