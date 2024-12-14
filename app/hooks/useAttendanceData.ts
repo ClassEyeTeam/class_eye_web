@@ -1,26 +1,21 @@
-import { endOfYear, startOfYear } from "date-fns";
-import { useEffect, useState } from "react";
 import {
   AttendanceData,
   generateMockData,
   getAttendanceSummary,
-} from "~/lib/mockData";
+} from "@/lib/mockData";
+import { endOfWeek, startOfWeek } from "date-fns";
+import { useEffect, useState } from "react";
 
 export function useAttendanceData() {
-  const currentYear = new Date().getFullYear();
-  const [dateRange, setDateRange] = useState<
-    [Date | undefined, Date | undefined]
-  >([
-    startOfYear(new Date(currentYear, 0, 1)),
-    endOfYear(new Date(currentYear, 0, 15)),
-  ]);
+  const [dateRange, setDateRange] = useState<[Date, Date]>(() => {
+    const now = new Date();
+    return [startOfWeek(now), endOfWeek(now)];
+  });
   const [attendanceData, setAttendanceData] = useState<AttendanceData[]>([]);
 
   useEffect(() => {
-    if (dateRange[0] && dateRange[1]) {
-      const newData = generateMockData(dateRange[0], dateRange[1]);
-      setAttendanceData(newData);
-    }
+    const newData = generateMockData(dateRange[0], dateRange[1]);
+    setAttendanceData(newData);
   }, [dateRange]);
 
   const summary = getAttendanceSummary(attendanceData);

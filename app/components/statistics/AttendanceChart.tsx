@@ -28,7 +28,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
     return (
       <div className="bg-white p-3 rounded-lg shadow-md border border-border">
         <p className="text-sm font-medium mb-1">
-          {new Date(label).toLocaleDateString()}
+          {new Date(label).toLocaleDateString(undefined, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </p>
         <p className="text-sm text-teal-600">
           Present: {data.present} ({data.presentPercentage}%)
@@ -59,7 +64,11 @@ export function AttendanceChart({ data }: AttendanceChartProps) {
             >
               <XAxis
                 dataKey="date"
-                tickFormatter={(value) => new Date(value).toLocaleDateString()}
+                tickFormatter={(value) =>
+                  new Date(value).toLocaleDateString(undefined, {
+                    weekday: "short",
+                  })
+                }
                 stroke="#888888"
                 fontSize={12}
               />

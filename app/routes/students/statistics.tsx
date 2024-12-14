@@ -1,21 +1,22 @@
-import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
-import { DateRange } from "react-day-picker";
+"use client";
 
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent } from "@/components/ui/card";
+import { format } from "date-fns";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 import { AttendanceChart } from "~/components/statistics/AttendanceChart";
-import { SummaryCard } from "~/components/statistics/SumarrayChart";
+import { SummaryCard } from "~/components/statistics/SummaryCard";
 import { useAttendanceData } from "~/hooks/useAttendanceData";
 
 export default function AttendanceDashboard() {
   const { dateRange, setDateRange, attendanceData, summary } =
     useAttendanceData();
-  const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(
-    dateRange[0] && dateRange[1]
-      ? { from: dateRange[0], to: dateRange[1] }
-      : undefined
-  );
+  const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>({
+    from: dateRange[0],
+    to: dateRange[1],
+  });
 
   const handleApplyDateRange = () => {
     if (tempDateRange?.from && tempDateRange?.to) {
@@ -23,8 +24,12 @@ export default function AttendanceDashboard() {
     }
   };
 
+  const formatDateRange = (start: Date, end: Date) => {
+    return `${format(start, "MMM d, yyyy")} - ${format(end, "MMM d, yyyy")}`;
+  };
+
   return (
-    <>
+    <div className="p-6  ">
       <h1 className="text-3xl font-bold mb-6">Attendance Dashboard</h1>
 
       <div className="grid gap-6 md:grid-cols-3 mb-6">
@@ -36,6 +41,10 @@ export default function AttendanceDashboard() {
       <div className="grid gap-6 md:grid-cols-[300px,1fr]">
         <Card className="h-fit">
           <CardContent className="p-4">
+            <p className="text-sm font-medium mb-2">Selected Range:</p>
+            <p className="text-sm mb-4">
+              {formatDateRange(dateRange[0], dateRange[1])}
+            </p>
             <Calendar
               initialFocus
               mode="range"
@@ -56,6 +65,6 @@ export default function AttendanceDashboard() {
         </Card>
         <AttendanceChart data={attendanceData} />
       </div>
-    </>
+    </div>
   );
 }
