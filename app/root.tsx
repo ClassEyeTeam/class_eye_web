@@ -13,6 +13,7 @@ import stylesheet from "./app.css?url";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/toaster";
 import { store } from "./store/store";
+import { AuthProvider } from "./auth/AuthContext";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -38,12 +39,14 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
-        <Provider store={store}>
-          <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-            {children}
-            <Toaster />
-          </ThemeProvider>
-        </Provider>
+        <AuthProvider>
+          <Provider store={store}>
+            <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </Provider>
+        </AuthProvider>
         <ScrollRestoration />
         <Scripts />
       </body>

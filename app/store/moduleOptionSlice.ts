@@ -27,6 +27,21 @@ export const getOptionModuleTeachers = createAsyncThunk(
   }
 );
 
+export const getOptionModuleTeachersForOption = createAsyncThunk(
+  "optionModuleTeachers/getOptionModuleTeachersForOption",
+  async (optionId: number, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`${API_ENDPOINT}/option/${optionId}`);
+      return response.data;
+    } catch (error) {
+      if (isAxiosError(error) && error.response) {
+        return rejectWithValue(error.response.data);
+      }
+      throw error;
+    }
+  }
+);
+
 // Async thunk to add an optionModuleTeacher
 export const addOptionModuleTeacher = createAsyncThunk(
   "optionModuleTeachers/addOptionModuleTeacher",
@@ -103,6 +118,18 @@ const optionModuleTeachersSlice = createSlice({
         state.optionModuleTeachers = action.payload;
       })
       .addCase(getOptionModuleTeachers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(getOptionModuleTeachersForOption.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getOptionModuleTeachersForOption.fulfilled, (state, action) => {
+        state.loading = false;
+        state.optionModuleTeachers = action.payload;
+      })
+      .addCase(getOptionModuleTeachersForOption.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       })

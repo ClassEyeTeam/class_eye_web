@@ -1,13 +1,13 @@
 // src/auth/authService.ts
-import { User, UserManager, WebStorageStateStore } from 'oidc-client-ts';
-import { authConfig } from './authConfig';
-import axios from 'axios';
+import axios from "axios";
+import { User, UserManager, WebStorageStateStore } from "oidc-client-ts";
+import { authConfig } from "./authConfig";
 
 class AuthService {
   private userManager: UserManager | null = null;
 
   constructor() {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       this.userManager = new UserManager({
         ...authConfig,
         userStore: new WebStorageStateStore({ store: window.localStorage }),
@@ -19,7 +19,7 @@ class AuthService {
         if (user?.access_token) {
           config.headers.Authorization = `Bearer ${user.access_token}`;
         }
-        config.headers['Access-Control-Allow-Origin'] = '*';
+        config.headers["Access-Control-Allow-Origin"] = "*";
         return config;
       });
     }
@@ -31,7 +31,7 @@ class AuthService {
       const user = await this.userManager.getUser();
       return user;
     } catch (error) {
-      console.error('Error getting user:', error);
+      console.error("Error getting user:", error);
       return null;
     }
   }
@@ -41,7 +41,7 @@ class AuthService {
       if (!this.userManager) return;
       await this.userManager.signinRedirect();
     } catch (error) {
-      console.error('Error logging in:', error);
+      console.error("Error logging in:", error);
     }
   }
 
@@ -50,7 +50,7 @@ class AuthService {
       if (!this.userManager) return;
       await this.userManager.signoutRedirect();
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   }
 
@@ -60,7 +60,7 @@ class AuthService {
       const user = await this.userManager.signinRedirectCallback();
       return user;
     } catch (error) {
-      console.error('Error handling callback:', error);
+      console.error("Error handling callback:", error);
       throw error;
     }
   }

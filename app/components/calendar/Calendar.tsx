@@ -1,153 +1,220 @@
-import { CalendarGrid } from "@/components/calendar/CalendarGrid";
-import { SessionForm } from "@/components/calendar/SessionForm";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { useSessions } from "@/hooks/useSessions";
-import { testOptions, testSessions } from "@/lib/data";
-import { CalendarConfig, Session } from "@/lib/types";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "@/components/ui/select";
+import { CalendarConfig, Session, WeekOption } from "@/lib/types";
+import { getWeek } from "date-fns";
+import { useEffect, useState } from "react";
+import { formatDate } from "~/lib/utils";
+import { useAppDispatch, useAppSelector } from "~/store/hooks";
+import { getOptionModuleTeachersForOption } from "~/store/moduleOptionSlice";
+import { getOptions, OptionsState } from "~/store/optionSlice";
+import {
+  createSession,
+  deleteSession,
+  getSessions,
+  SessionsState,
+  updateSession,
+} from "~/store/sessionSlice";
+import { CalendarGrid } from "./CalendarGrid";
+import { DayPicker } from "./DayPicker";
+import { SessionForm } from "./SessionForm";
 
 interface CalendarProps {
   config: CalendarConfig;
 }
 
-export function Calendar({ config }: CalendarProps) {
-  const { sessions, addSession, updateSession, deleteSession, fetchSessions } =
-    useSessions(testSessions);
-  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
+const generateWeekOptions = (): WeekOption[] => {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const weeks: WeekOption[] = [];
 
-  const handleSessionClick = (session: Session) => {
-    setSelectedSession(session);
+  for (let week = 1; week <= 52; week++) {
+    weeks.push({
+      value: `${currentYear}-W${week.toString().padStart(2, "0")}`,
+      label: `Week ${week} of ${currentYear}`,
+    });
+  }
+
+  return weeks;
+};
+
+const getCurrentWeek = (): string => {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 1);
+  const week = Math.ceil(
+    ((now.getTime() - start.getTime()) / 86400000 + start.getDay() + 1) / 7
+  );
+  return `${now.getFullYear()}-W${week.toString().padStart(2, "0")}`;
+};
+
+export function Calendar({ config }: CalendarProps) {
+  const [selectedSession, setSelectedSession] = useState<Session | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<number | null>(1);
+  const [selectedWeek, setSelectedWeek] = useState<string>(getCurrentWeek());
+  const { options } = useAppSelector(
+    (state: { options: OptionsState }) => state.options
+  );
+  const { sessions } = useAppSelector(
+    (state: { sessions: SessionsState }) => state.sessions
+  );
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    if (selectedOption)
+      dispatch(getOptionModuleTeachersForOption(selectedOption));
+  }, [selectedOption]);
+
+  useEffect(() => {
+    dispatch(getSessions());
+    dispatch(getOptions());
+  }, []);
+
+  const handleSessionClick = (session: Session | null, clickedDate: Date) => {
+    if (!selectedOption && !session) {
+      // Don't open the form if no option is selected and it's not an existing session
+      return;
+    }
+    setSelectedDate(clickedDate);
+    if (session) {
+      setSelectedSession(session);
+    } else if (selectedOption) {
+      setSelectedSession({
+        id: 0,
+        moduleOptionId: selectedOption,
+        startDateTime: clickedDate.toISOString(),
+        endDateTime: new Date(
+          clickedDate.getTime() + 60 * 60 * 1000
+        ).toISOString(),
+      });
+    }
     setIsFormOpen(true);
   };
-  const handleFormSubmit = (data: Session) => {
-    if (selectedSession) {
-      updateSession({
-        ...data,
-        id: selectedSession.id,
-        studentGroup: selectedOption,
-      });
-    } else {
-      addSession({
-        ...data,
-        id: Date.now().toString(),
-        studentGroup: selectedOption,
-      });
+
+  const handleFormSubmit = (data: {
+    startTime: string;
+    endTime: string;
+    moduleOptionId: number;
+  }) => {
+    if (selectedDate) {
+      const [startHours, startMinutes] = data.startTime.split(":").map(Number);
+      const [endHours, endMinutes] = data.endTime.split(":").map(Number);
+
+      const startDateTime = new Date(selectedDate);
+      const endDateTime = new Date(selectedDate);
+
+      startDateTime.setHours(startHours, startMinutes, 0, 0);
+      endDateTime.setHours(endHours, endMinutes, 0, 0);
+
+      const sessionData: Session = {
+        ...selectedSession!,
+        startDateTime: formatDate(startDateTime),
+        endDateTime: formatDate(endDateTime),
+        moduleOptionId: data.moduleOptionId,
+      };
+
+      if (selectedSession && selectedSession.id) {
+        dispatch(updateSession(sessionData));
+      } else {
+        dispatch(createSession(sessionData));
+      }
     }
     setIsFormOpen(false);
     setSelectedSession(null);
+    setSelectedDate(null);
   };
 
+  const handleDeleteSession = (sessionId: number) => {
+    // Dispatch the delete action
+    dispatch(deleteSession(sessionId));
+    setIsFormOpen(false);
+    setSelectedSession(null);
+    setSelectedDate(null);
+  };
   const handleFormCancel = () => {
     setIsFormOpen(false);
     setSelectedSession(null);
+    setSelectedDate(null);
   };
 
-  const handleSessionDelete = () => {
-    if (selectedSession) {
-      deleteSession(selectedSession.id);
-      setIsFormOpen(false);
-      setSelectedSession(null);
-    }
+  const handleDaySelect = (date: Date) => {
+    const weekNumber = getWeek(date, { weekStartsOn: 1 });
+    const weekString = `${date.getFullYear()}-W${weekNumber
+      .toString()
+      .padStart(2, "0")}`;
+    setSelectedWeek(weekString);
+    setSelectedDate(date);
   };
-  const handleSearch = async () => {
-    if (selectedOption) {
-      setIsLoading(true);
-      try {
-        await fetchSessions(selectedOption);
-      } catch (error) {
-        console.error("Error fetching sessions:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
-
-  const filteredSessions = selectedOption
-    ? sessions.filter((session) => session.studentGroup === selectedOption)
-    : sessions;
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <div className="flex items-center space-x-2">
-          <Select onValueChange={setSelectedOption}>
-            <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select an option" />
-            </SelectTrigger>
-            <SelectContent>
-              <div className="p-2">
-                <Input
-                  placeholder="Search options"
-                  value={selectedOption}
-                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                    setSelectedOption(e.target.value)
-                  }
-                  className="mb-2"
-                />
-              </div>
-              {testOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={handleSearch} disabled={isLoading}>
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Searching...
-              </>
-            ) : (
-              "Search"
-            )}
-          </Button>
-        </div>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button>Créer une nouvelle session</Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {selectedSession
-                  ? "Modifier la session"
-                  : "Créer une nouvelle session"}
-              </DialogTitle>
-            </DialogHeader>
-            <SessionForm
-              initialData={selectedSession || undefined}
-              onSubmit={handleFormSubmit}
-              onDelete={selectedSession ? handleSessionDelete : undefined}
-              onCancel={handleFormCancel}
-            />
-          </DialogContent>
-        </Dialog>
+        <Select onValueChange={(value) => setSelectedOption(Number(value))}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Select an option" />
+          </SelectTrigger>
+          <SelectContent>
+            <div className="p-2">
+              <Input
+                placeholder="Search options"
+                // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                //   handleOptionSearch(e.target.value)
+                // }
+                className="mb-2"
+              />
+            </div>
+            {options.map((option) => (
+              <SelectItem key={option.id} value={option.id.toString()}>
+                {option.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <DayPicker onSelectDay={handleDaySelect} />
       </div>
-      <CalendarGrid
-        config={config}
-        sessions={sessions}
-        onSessionClick={handleSessionClick}
-      />
+
+      {selectedOption ? (
+        <CalendarGrid
+          config={config}
+          sessions={sessions}
+          onSessionClick={handleSessionClick}
+          selectedWeek={selectedWeek}
+          selectedOption={selectedOption}
+          selectedDate={selectedDate}
+        />
+      ) : (
+        "Select an option to view sessions"
+      )}
+
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {selectedSession
+                ? "Modifier la session"
+                : "Créer une nouvelle session"}
+            </DialogTitle>
+          </DialogHeader>
+          <SessionForm
+            initialData={selectedSession}
+            selectedDate={selectedDate}
+            selectedOption={selectedOption}
+            onSubmit={handleFormSubmit}
+            onCancel={handleFormCancel}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

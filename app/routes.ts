@@ -22,5 +22,6 @@ export default [
     route("university/assignment", "routes/university/assignment.tsx"),
     route("students", "routes/students/students.tsx"),
     route("sessions", "routes/students/sessions.tsx"),
+    route("statistics", "routes/students/statistics.tsx"),
   ]),
 ] satisfies RouteConfig;

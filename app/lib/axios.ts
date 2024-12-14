@@ -1,23 +1,24 @@
 // src/lib/axios.ts
-import axios from 'axios';
-import { authService } from '~/auth/authService';
+import axios from "axios";
+import { authService } from "~/auth/authService";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL_GETWAY,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
-  withCredentials: true
+  withCredentials: true,
 });
 
 // Request interceptor
 api.interceptors.request.use(
   async (config) => {
-    if (typeof window !== 'undefined') {
-      const user = window.localStorage.getItem('user');
+    if (typeof window !== "undefined") {
+      const user = window.localStorage.getItem("user");
       if (user) {
         const { access_token } = JSON.parse(user);
+        console.log("access_token", access_token);
         config.headers.Authorization = `Bearer ${access_token}`;
       }
     }
@@ -30,8 +31,8 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && typeof window !== 'undefined') {
-      window.localStorage.removeItem('user');
+    if (error.response?.status === 401 && typeof window !== "undefined") {
+      window.localStorage.removeItem("user");
       authService.login();
 
       //window.location.href = '/login';

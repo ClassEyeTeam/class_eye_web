@@ -6,6 +6,7 @@ import { rtkQueryErrorLogger } from "./middleware";
 import moduleOptionSlice from "./moduleOptionSlice";
 import moduleSlice from "./moduleSlice";
 import optionSlice from "./optionSlice";
+import sessionSlice from "./sessionSlice";
 import studentSlice from "./students/studentSlice";
 import teacherSlice from "./teacherSlice";
 // ...
@@ -20,6 +21,7 @@ export const store = configureStore({
     students: studentSlice,
     blocks: blockSlice,
     rooms: roomsSlice,
+    sessions: sessionSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(rtkQueryErrorLogger),

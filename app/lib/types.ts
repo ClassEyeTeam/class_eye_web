@@ -89,17 +89,19 @@ export type DayOfWeek =
   | "sunday";
 
 export interface Session {
-  id: string;
-  dayOfWeek: DayOfWeek;
-  startTime: string;
-  endTime: string;
-  moduleName: string;
-  teacher: string;
-  studentGroup: string;
+  id: number;
+  moduleOptionId: number;
+  startDateTime: string;
+  endDateTime: string;
 }
 
 export interface CalendarConfig {
   startHour: number;
   endHour: number;
   daysToShow: DayOfWeek[];
+}
+
+export interface WeekOption {
+  value: string;
+  label: string;
 }

@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
+import { isAxiosError } from "axios";
+import api from "~/lib/axios";
 import { Module } from "~/lib/types";
 
 export interface ModulesState {
@@ -8,16 +9,16 @@ export interface ModulesState {
   error: string | null;
 }
 
-const API_ENDPOINT = `UNIVERSITY-SERVICE/modules`;
+const API_ENDPOINT = `${import.meta.env.VITE_API_URL_UNIVERSITY}/modules`;
 // Async thunk to get modules
 export const getModules = createAsyncThunk(
   "modules/getModules",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(API_ENDPOINT);
+      const response = await api.get(API_ENDPOINT);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -30,10 +31,10 @@ export const addModule = createAsyncThunk(
   "modules/addModule",
   async (module: Partial<Module>, { rejectWithValue }) => {
     try {
-      const response = await axios.post(API_ENDPOINT, module);
+      const response = await api.post(API_ENDPOINT, module);
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -46,13 +47,13 @@ export const updateModule = createAsyncThunk(
   "modules/updateModule",
   async (updatedModule: Module, { rejectWithValue }) => {
     try {
-      const response = await axios.put(
+      const response = await api.put(
         `${API_ENDPOINT}/${updatedModule.id}`,
         updatedModule
       );
       return response.data;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;
@@ -65,10 +66,10 @@ export const deleteModule = createAsyncThunk(
   "modules/deleteModule",
   async (id: number, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_ENDPOINT}/${id}`);
+      await api.delete(`${API_ENDPOINT}/${id}`);
       return id;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response) {
+      if (isAxiosError(error) && error.response) {
         return rejectWithValue(error.response.data);
       }
       throw error;

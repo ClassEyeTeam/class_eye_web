@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Session } from "~/lib/types";
+import { toast } from "./use-toast";
 
 export function useSessions(initialSessions: Session[] = []) {
   const [sessions, setSessions] = useState<Session[]>(initialSessions);
@@ -7,13 +8,16 @@ export function useSessions(initialSessions: Session[] = []) {
   const addSession = (newSession: Session) => {
     const isConflict = sessions.some(
       (session) =>
-        session.dayOfWeek === newSession.dayOfWeek &&
-        (session.startTime === newSession.startTime ||
-          session.endTime === newSession.endTime)
+        session.startDateTime === newSession.startDateTime ||
+        session.endDateTime === newSession.endDateTime
     );
 
     if (isConflict) {
-      alert("There is already a session at this time on this day.");
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There is already a session at this time on this day.",
+      });
       return;
     }
 
@@ -24,13 +28,16 @@ export function useSessions(initialSessions: Session[] = []) {
     const isConflict = sessions.some(
       (session) =>
         session.id !== updatedSession.id &&
-        session.dayOfWeek === updatedSession.dayOfWeek &&
-        session.startTime === updatedSession.startTime &&
-        session.endTime === updatedSession.endTime
+        (session.startDateTime === updatedSession.startDateTime ||
+          session.endDateTime === updatedSession.endDateTime)
     );
 
     if (isConflict) {
-      alert("There is already a session at this time on this day.");
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: "There is already a session at this time on this day.",
+      });
       return;
     }
 
@@ -45,14 +52,14 @@ export function useSessions(initialSessions: Session[] = []) {
     setSessions(sessions.filter((session) => session.id !== sessionId));
   };
 
-  const fetchSessions = async (studentGroup: string) => {
+  const fetchSessions = async (optionId: number) => {
     // Simulating an API call with a delay
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // For demonstration purposes, we're filtering the initial sessions
     // In a real application, you would fetch this data from an API
     const filteredSessions = initialSessions.filter(
-      (session) => session.studentGroup === studentGroup
+      (session) => session.OptionId === optionId
     );
 
     setSessions(filteredSessions);

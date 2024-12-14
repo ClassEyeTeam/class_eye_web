@@ -1,4 +1,12 @@
 import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -8,107 +16,146 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Session } from "@/lib/types";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { DayOfWeek, Session } from "~/lib/types";
+import * as z from "zod";
+import { useAppSelector } from "~/store/hooks";
+import { OptionModuleTeachersState } from "~/store/moduleOptionSlice";
 
 interface SessionFormProps {
-  initialData?: Session;
-  onSubmit: (data: Session) => void;
-  onDelete?: () => void;
+  initialData?: Session | null;
+  selectedDate: Date | null;
+  selectedOption: number | null;
+  onSubmit: (data: {
+    moduleOptionId: number;
+    startTime: string;
+    endTime: string;
+  }) => void;
   onCancel: () => void;
 }
 
+const formSchema = z.object({
+  moduleOptionId: z.number({
+    required_error: "Please select a module",
+  }),
+  startTime: z.string().min(1, "Start time is required"),
+  endTime: z.string().min(1, "End time is required"),
+});
+
 export function SessionForm({
   initialData,
+  selectedDate,
+  selectedOption,
   onSubmit,
-  onDelete,
   onCancel,
 }: SessionFormProps) {
-  const { register, handleSubmit, setValue, watch } = useForm<Session>({
-    defaultValues: initialData || {
-      id: "",
-      dayOfWeek: "monday",
-      startTime: "08:00",
-      endTime: "09:00",
-      moduleName: "",
-      teacher: "",
-      studentGroup: "",
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      moduleOptionId:
+        initialData?.moduleOptionId || selectedOption || undefined,
+      startTime: initialData
+        ? new Date(initialData.startDateTime).toTimeString().slice(0, 5)
+        : "",
+      endTime: initialData
+        ? new Date(initialData.endDateTime).toTimeString().slice(0, 5)
+        : "",
     },
   });
-
-  const dayOfWeek = watch("dayOfWeek");
-
-  const daysOfWeek: DayOfWeek[] = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ];
+  const { optionModuleTeachers } = useAppSelector(
+    (state: { moduleOption: OptionModuleTeachersState }) => state.moduleOption
+  );
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
-        <Label htmlFor="dayOfWeek">Jour de la semaine</Label>
-        <Select
-          onValueChange={(value: DayOfWeek) => setValue("dayOfWeek", value)}
-          defaultValue={dayOfWeek}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Sélectionnez un jour" />
-          </SelectTrigger>
-          <SelectContent>
-            {daysOfWeek.map((day) => (
-              <SelectItem key={day} value={day}>
-                {day.charAt(0).toUpperCase() + day.slice(1)}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label htmlFor="startTime">Heure de début</Label>
-        <Input
-          id="startTime"
-          type="time"
-          {...register("startTime")}
-          min="08:00"
-          max="18:00"
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="moduleOptionId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Module Option</FormLabel>
+              <Select
+                onValueChange={(value) => field.onChange(Number(value))}
+                defaultValue={field.value?.toString()}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a module option" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {optionModuleTeachers.length > 0 ? (
+                    optionModuleTeachers.map((option) => (
+                      <SelectItem key={option.id} value={option.id.toString()}>
+                        {option.module.name} - {option.teacher.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="no-options">
+                      No options available
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <Label htmlFor="endTime">Heure de fin</Label>
-        <Input
-          id="endTime"
-          type="time"
-          {...register("endTime")}
-          min="08:00"
-          max="18:00"
+        <FormField
+          control={form.control}
+          name="startTime"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Start Time</FormLabel>
+              <FormControl>
+                <Input
+                  id="startTime"
+                  type="time"
+                  {...field}
+                  className="input"
+                  required
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      <div>
-        <Label htmlFor="moduleName">Nom du module</Label>
-        <Input id="moduleName" {...register("moduleName")} />
-      </div>
-      <div>
-        <Label htmlFor="teacher">Enseignant</Label>
-        <Input id="teacher" {...register("teacher")} />
-      </div>
-      <div className="flex justify-between">
-        <Button type="submit">
-          {initialData ? "Mettre à jour la session" : "Créer une session"}
-        </Button>
-        {onDelete && (
-          <Button type="button" variant="destructive" onClick={onDelete}>
-            Supprimer la session
-          </Button>
+        <FormField
+          control={form.control}
+          name="endTime"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>End Time</FormLabel>
+              <FormControl>
+                <Input
+                  id="endTime"
+                  type="time"
+                  {...field}
+                  className="input"
+                  required
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {selectedDate && (
+          <div>
+            <Label>Selected Date</Label>
+            <div>{selectedDate.toDateString()}</div>
+          </div>
         )}
-        <Button type="button" variant="secondary" onClick={onCancel}>
-          Annuler
-        </Button>
-      </div>
-    </form>
+        <div className="flex justify-between">
+          <Button type="submit">
+            {initialData?.id ? "Update Session" : "Create Session"}
+          </Button>
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+        </div>
+      </form>
+    </Form>
   );
 }

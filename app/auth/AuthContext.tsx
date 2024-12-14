@@ -1,6 +1,12 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { User } from 'oidc-client-ts';
-import { authService } from './authService';
+import { User } from "oidc-client-ts";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { authService } from "./authService";
 
 interface AuthContextType {
   user: User | null;
@@ -11,17 +17,16 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
-export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ 
-  children 
+export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const storedUser = localStorage.getItem('user');
+        const storedUser = localStorage.getItem("user");
         if (storedUser) {
           setUser(JSON.parse(storedUser));
         }
@@ -29,14 +34,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         setLoading(false);
       }
     };
-    if (typeof window !== 'undefined') {
-        initAuth();
-      }
-    }, []);
-      // Don't render during SSR
-  if (!isClient) {
-    return null;
-  }
+    if (typeof window !== "undefined") {
+      initAuth();
+    }
+  }, []);
 
   const login = useCallback(async () => {
     try {
@@ -44,7 +45,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       await authService.login();
       const user = await authService.getUser();
       if (user) {
-        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
       }
     } finally {
@@ -56,7 +57,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       setLoading(true);
       await authService.logout();
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
       setUser(null);
     } finally {
       setLoading(false);
@@ -73,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
