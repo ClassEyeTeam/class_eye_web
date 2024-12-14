@@ -21,7 +21,6 @@ import { getOptionModuleTeachersForOption } from "~/store/moduleOptionSlice";
 import { getOptions, OptionsState } from "~/store/optionSlice";
 import {
   createSession,
-  deleteSession,
   getSessions,
   SessionsState,
   updateSession,
@@ -62,31 +61,33 @@ export function Calendar({ config }: CalendarProps) {
   const [selectedSession, setSelectedSession] = useState<Session | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState<number | null>(1);
+  const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [selectedWeek, setSelectedWeek] = useState<string>(getCurrentWeek());
   const { options } = useAppSelector(
     (state: { options: OptionsState }) => state.options
   );
-  const { sessions } = useAppSelector(
+  const { sessions, error, loading } = useAppSelector(
     (state: { sessions: SessionsState }) => state.sessions
   );
 
   const dispatch = useAppDispatch();
+
   useEffect(() => {
     if (selectedOption)
       dispatch(getOptionModuleTeachersForOption(selectedOption));
   }, [selectedOption]);
 
   useEffect(() => {
-    dispatch(getSessions());
     dispatch(getOptions());
   }, []);
 
+  useEffect(() => {
+    if (selectedOption) dispatch(getSessions(selectedOption));
+  }, [selectedOption]);
+
   const handleSessionClick = (session: Session | null, clickedDate: Date) => {
-    if (!selectedOption && !session) {
-      // Don't open the form if no option is selected and it's not an existing session
-      return;
-    }
+    if (!selectedOption && !session) return;
+
     setSelectedDate(clickedDate);
     if (session) {
       setSelectedSession(session);
@@ -136,13 +137,6 @@ export function Calendar({ config }: CalendarProps) {
     setSelectedDate(null);
   };
 
-  const handleDeleteSession = (sessionId: number) => {
-    // Dispatch the delete action
-    dispatch(deleteSession(sessionId));
-    setIsFormOpen(false);
-    setSelectedSession(null);
-    setSelectedDate(null);
-  };
   const handleFormCancel = () => {
     setIsFormOpen(false);
     setSelectedSession(null);
@@ -157,6 +151,7 @@ export function Calendar({ config }: CalendarProps) {
     setSelectedWeek(weekString);
     setSelectedDate(date);
   };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -166,13 +161,7 @@ export function Calendar({ config }: CalendarProps) {
           </SelectTrigger>
           <SelectContent>
             <div className="p-2">
-              <Input
-                placeholder="Search options"
-                // onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                //   handleOptionSearch(e.target.value)
-                // }
-                className="mb-2"
-              />
+              <Input placeholder="Search options" className="mb-2" />
             </div>
             {options.map((option) => (
               <SelectItem key={option.id} value={option.id.toString()}>
@@ -184,7 +173,11 @@ export function Calendar({ config }: CalendarProps) {
         <DayPicker onSelectDay={handleDaySelect} />
       </div>
 
-      {selectedOption ? (
+      {loading ? (
+        <div className="flex justify-center items-center h-[300px]">
+          <div className="text-center">Loading...</div>
+        </div>
+      ) : selectedOption ? (
         <CalendarGrid
           config={config}
           sessions={sessions}
@@ -194,7 +187,9 @@ export function Calendar({ config }: CalendarProps) {
           selectedDate={selectedDate}
         />
       ) : (
-        "Select an option to view sessions"
+        <div className="flex justify-center items-center h-[300px]">
+          <div className="text-center">Select an option to view sessions</div>
+        </div>
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

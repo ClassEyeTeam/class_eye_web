@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { OptionModuleTeachersState } from "~/store/moduleOptionSlice";
 import { deleteSession } from "~/store/sessionSlice";
+import AttendanceComponent from "../attendance";
 import { DeleteConfirmation } from "../delete-confirmation";
 import { UniversalDialog } from "../dialog";
 
@@ -28,6 +29,7 @@ export function CalendarGrid({
 }: CalendarGridProps) {
   const dispatch = useAppDispatch();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   const hours = [];
   for (let h = config.startHour; h < config.endHour; h++) {
     hours.push(h);
@@ -123,76 +125,83 @@ export function CalendarGrid({
                   }
                 }}
               >
-                {daySessions.map((session) => (
-                  <div
-                    key={session.id}
-                    className="absolute bg-indigo-200 text-[10px] leading-tight overflow-hidden cursor-pointer z-10 p-1"
-                    style={getSessionStyle(session)}
-                  >
-                    <div className="font-bold">
-                      {optionMap[session.moduleOptionId].module.name}
-                    </div>
-                    <div>{optionMap[session.moduleOptionId].teacher.name}</div>
-                    <div className="flex justify-end mb-1 space-x-1">
-                      <UniversalDialog
-                        trigger={
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setIsDeleteDialogOpen(true)}
-                          >
-                            <Trash2 className="h-4 w-4" color="red" />
-                          </Button>
-                        }
-                        title="Delete Session"
-                        isOpen={isDeleteDialogOpen}
-                        onOpenChange={setIsDeleteDialogOpen}
-                      >
-                        <DeleteConfirmation
-                          itemName={
-                            optionMap[session.moduleOptionId].module.name
+                {daySessions.map((session) => {
+                  const optionData = optionMap[session.moduleOptionId];
+                  const moduleName = optionData?.module?.name || "Unknown";
+                  const teacherName = optionData?.teacher?.name || "Unknown";
+
+                  return (
+                    <div
+                      key={session.id}
+                      className="absolute bg-indigo-200 text-[10px] leading-tight overflow-hidden cursor-pointer z-10 p-1"
+                      style={getSessionStyle(session)}
+                    >
+                      {optionModuleTeachers.length > 0 && (
+                        <>
+                          <div className="font-bold">{moduleName}</div>
+                          <div>{teacherName}</div>
+                        </>
+                      )}
+                      <div className="flex justify-end mb-1 space-x-1">
+                        <UniversalDialog
+                          trigger={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setIsDeleteDialogOpen(true)}
+                            >
+                              <Trash2 className="h-4 w-4" color="red" />
+                            </Button>
                           }
-                          itemType="Session"
-                          onCancel={() => setIsDeleteDialogOpen(false)}
-                          onConfirm={() => {
-                            dispatch(deleteSession(session.id));
-                            setIsDeleteDialogOpen(false);
+                          title="Delete Session"
+                          isOpen={isDeleteDialogOpen}
+                          onOpenChange={setIsDeleteDialogOpen}
+                        >
+                          <DeleteConfirmation
+                            itemName={moduleName}
+                            itemType="Session"
+                            onCancel={() => setIsDeleteDialogOpen(false)}
+                            onConfirm={() => {
+                              dispatch(deleteSession(session.id));
+                              setIsDeleteDialogOpen(false);
+                            }}
+                          />
+                        </UniversalDialog>
+
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            // Pass the existing session for editing
+                            if (selectedOption) {
+                              onSessionClick(
+                                session,
+                                new Date(session.startDateTime)
+                              );
+                            }
                           }}
-                        />
-                      </UniversalDialog>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => {
-                          // Pass the existing session for editing
-                          if (selectedOption) {
-                            onSessionClick(
-                              session,
-                              new Date(session.startDateTime)
-                            );
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Modify session</span>
+                        </Button>
+                        <UniversalDialog
+                          className="max-w-[800px]"
+                          trigger={
+                            <Button variant="ghost" size="icon">
+                              <Eye className="h-3 w-3" />
+                              <span className="sr-only">View session info</span>
+                            </Button>
                           }
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                        <span className="sr-only">Modify session</span>
-                      </Button>
-
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          // Placeholder for view session info functionality
-                          // e.stopPropagation();
-                          // onViewSessionInfo(session);
-                        }}
-                      >
-                        <Eye className="h-3 w-3" />
-                        <span className="sr-only">View session info</span>
-                      </Button>
+                          title="Session details"
+                          isOpen={isViewDialogOpen}
+                          onOpenChange={setIsViewDialogOpen}
+                        >
+                          <AttendanceComponent />
+                        </UniversalDialog>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             );
           })}

@@ -14,9 +14,10 @@ const API_ENDPOINT = `${import.meta.env.VITE_API_URL_STUDENT}/sessions`;
 // Async thunks
 export const getSessions = createAsyncThunk(
   "sessions/getSessions",
-  async (_, { rejectWithValue }) => {
+  async (optionId: number, { rejectWithValue }) => {
     try {
-      const response = await api.get(API_ENDPOINT);
+      const response = await api.get(`${API_ENDPOINT}/option/${optionId}`);
+      console.log(response.data);
       return response.data;
     } catch (error) {
       if (isAxiosError(error) && error.response) {

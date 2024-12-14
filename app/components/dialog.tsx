@@ -6,6 +6,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ReactNode } from "react";
+import { cn } from "~/lib/utils";
 
 interface UniversalDialogProps {
   trigger: ReactNode;
@@ -13,6 +14,7 @@ interface UniversalDialogProps {
   children: ReactNode;
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
+  className?: string; // Add optional className
 }
 
 export function UniversalDialog({
@@ -21,11 +23,12 @@ export function UniversalDialog({
   children,
   isOpen,
   onOpenChange: setOpen,
+  className,
 }: UniversalDialogProps) {
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className={cn("max-w-[425px]", className)}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>

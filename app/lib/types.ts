@@ -105,3 +105,66 @@ export interface WeekOption {
   value: string;
   label: string;
 }
+export enum AttendanceStatus {
+  PRESENT = "PRESENT",
+  ABSENT = "ABSENT",
+  LATE = "LATE",
+}
+
+export interface Attendance {
+  id: number;
+  status: AttendanceStatus;
+  startTime: string;
+  endTime?: string;
+  studentId: number;
+}
+
+export interface Student {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  attendances: Attendance[];
+}
+
+// Test data
+export const testStudents: Student[] = [
+  {
+    id: 1,
+    firstName: "John",
+    lastName: "Doe",
+    email: "john.doe@example.com",
+    optionId: 1,
+    attendances: [
+      {
+        id: 1,
+        status: AttendanceStatus.PRESENT,
+        startTime: "2023-06-01T09:00:00Z",
+        studentId: 1,
+      },
+    ],
+  },
+  {
+    id: 2,
+    firstName: "Jane",
+    lastName: "Smith",
+    email: "jane.smith@example.com",
+    optionId: 1,
+    attendances: [
+      {
+        id: 2,
+        status: AttendanceStatus.LATE,
+        startTime: "2023-06-01T09:15:00Z",
+        studentId: 2,
+      },
+    ],
+  },
+  {
+    id: 3,
+    firstName: "Bob",
+    lastName: "Johnson",
+    email: "bob.johnson@example.com",
+    optionId: 2,
+    attendances: [],
+  },
+];

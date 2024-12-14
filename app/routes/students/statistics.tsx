@@ -29,7 +29,7 @@ export default function AttendanceDashboard() {
   };
 
   return (
-    <div className="p-6  ">
+    <div className="p-6 max-w-[1400px] ">
       <h1 className="text-3xl font-bold mb-6">Attendance Dashboard</h1>
 
       <div className="grid gap-6 md:grid-cols-3 mb-6">
