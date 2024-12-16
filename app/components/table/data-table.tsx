@@ -35,6 +35,7 @@ interface DataTableProps<TData, TValue> {
   filterColumn?: string;
   createElement: React.ReactNode;
   filterComponent?: React.ReactNode; // New prop for filter components
+  sessionId: number;
 }
 
 export function DataTable<TData, TValue>({
@@ -42,7 +43,8 @@ export function DataTable<TData, TValue>({
   data,
   filterColumn,
   createElement,
-  filterComponent, // Add the new prop
+  filterComponent,
+  sessionId, // Add the new prop
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);

@@ -6,6 +6,10 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { OptionModuleTeachersState } from "~/store/moduleOptionSlice";
 import { deleteSession } from "~/store/sessionSlice";
+import {
+  getAttendances,
+  resetAttendances,
+} from "~/store/students/attendanceSlice";
 import AttendanceComponent from "../attendance";
 import { DeleteConfirmation } from "../delete-confirmation";
 import { UniversalDialog } from "../dialog";
@@ -37,6 +41,7 @@ export function CalendarGrid({
   const { optionModuleTeachers } = useAppSelector(
     (state: { moduleOption: OptionModuleTeachersState }) => state.moduleOption
   );
+
   const optionMap: Record<number, OptionModuleTeacher> =
     optionModuleTeachers.reduce((map, item) => {
       map[item.id] = item;
@@ -187,16 +192,30 @@ export function CalendarGrid({
                         <UniversalDialog
                           className="max-w-[800px]"
                           trigger={
-                            <Button variant="ghost" size="icon">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                dispatch(getAttendances(session.id));
+                              }}
+                            >
                               <Eye className="h-3 w-3" />
                               <span className="sr-only">View session info</span>
                             </Button>
                           }
                           title="Session details"
                           isOpen={isViewDialogOpen}
-                          onOpenChange={setIsViewDialogOpen}
+                          onOpenChange={(open) => {
+                            setIsViewDialogOpen(open);
+                            if (!open) {
+                              dispatch(resetAttendances());
+                            }
+                          }}
                         >
-                          <AttendanceComponent />
+                          <AttendanceComponent
+                            optionId={optionData.option.id}
+                            sessionId={session.id}
+                          />
                         </UniversalDialog>
                       </div>
                     </div>

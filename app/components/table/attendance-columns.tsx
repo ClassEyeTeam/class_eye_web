@@ -4,11 +4,19 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil } from "lucide-react";
 import { useState } from "react";
-import { Attendance, Student } from "~/lib/types";
+import { Attendance, AttendanceStatus } from "~/lib/types";
+import { useAppDispatch } from "~/store/hooks";
+import { updateAttendance } from "~/store/students/attendanceSlice";
 import { UniversalDialog } from "../dialog";
-import { AttendanceForm } from "../forms/attendance-form";
-
-export const attendanceColumns: ColumnDef<Student>[] = [
+import { AttendanceForm, AttendanceFormValues } from "../forms/attendance-form";
+interface AttendanceColumn {
+  data: Attendance[];
+  sessionId: number;
+}
+export const attendanceColumns = ({
+  sessionId,
+  data,
+}: AttendanceColumn): ColumnDef<Attendance>[] => [
   {
     accessorKey: "id",
     header: "ID",
@@ -26,48 +34,57 @@ export const attendanceColumns: ColumnDef<Student>[] = [
         </Button>
       );
     },
+    cell: ({ row }) => {
+      return row.original.student.firstName;
+    },
   },
   {
     accessorKey: "lastName",
     header: "Last Name",
+    cell: ({ row }) => {
+      return row.original.student.lastName;
+    },
   },
   {
     accessorKey: "email",
     header: "Email",
+    cell: ({ row }) => {
+      return row.original.student.email;
+    },
   },
   {
-    id: "attendanceStatus",
+    id: "status",
     header: "Attendance Status",
     cell: ({ row }) => {
-      const student = row.original;
-      const latestAttendance =
-        student.attendances[student.attendances.length - 1];
-      return latestAttendance ? latestAttendance.status : "Not Recorded";
+      return row.original.status;
     },
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row, table }) => {
-      const student = row.original;
+      const attendance = row.original;
       const [isDialogOpen, setIsDialogOpen] = useState(false);
-      const latestAttendance =
-        student.attendances[student.attendances.length - 1];
+      const dispatch = useAppDispatch();
+      const handleAttendanceSubmit = (
+        values: AttendanceFormValues,
+        attendance: Attendance
+      ) => {
+        dispatch(
+          updateAttendance({
+            id: attendance.id,
+            attendance: {
+              startTime:
+                attendance.status == AttendanceStatus.NOT_RECORDED
+                  ? new Date().toISOString()
+                  : attendance.startTime,
+              id: attendance.id,
+              sessionId: sessionId,
+              ...values,
+            },
+          })
+        );
 
-      const handleAttendanceUpdate = (values: Partial<Attendance>) => {
-        const updatedStudents = table.options.data.map((s: Student) => {
-          if (s.id === student.id) {
-            return {
-              ...s,
-              attendances: [
-                ...s.attendances.slice(0, -1),
-                { ...latestAttendance, ...values } as Attendance,
-              ],
-            };
-          }
-          return s;
-        });
-        // table.options.meta?.updateData(updatedStudents);
         setIsDialogOpen(false);
       };
 
@@ -83,14 +100,13 @@ export const attendanceColumns: ColumnDef<Student>[] = [
                 <Pencil className="h-4 w-4" />
               </Button>
             }
-            title={latestAttendance ? "Update Attendance" : "Create Attendance"}
+            title={"Update Attendance"}
             isOpen={isDialogOpen}
             onOpenChange={setIsDialogOpen}
           >
             <AttendanceForm
-              student={student}
-              attendance={latestAttendance}
-              onSubmit={handleAttendanceUpdate}
+              attendance={attendance}
+              onSubmit={(values) => handleAttendanceSubmit(values, attendance)}
             />
           </UniversalDialog>
         </div>

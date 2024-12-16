@@ -19,46 +19,49 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Attendance, AttendanceStatus, Student } from "~/lib/types";
+import { Attendance, AttendanceStatus } from "~/lib/types";
 
 const formSchema = z.object({
   status: z.nativeEnum(AttendanceStatus),
   studentId: z.number(),
-  startTime: z.string().datetime(),
+  // startTime: z.string().datetime(),
 });
 
-type AttendanceFormValues = z.infer<typeof formSchema>;
+export type AttendanceFormValues = z.infer<typeof formSchema>;
 
 interface AttendanceFormProps {
-  student: Student;
-  attendance?: Attendance;
+  attendance: Attendance;
   onSubmit: (values: AttendanceFormValues) => void;
 }
 
-export function AttendanceForm({
-  student,
-  attendance,
-  onSubmit,
-}: AttendanceFormProps) {
+export function AttendanceForm({ attendance, onSubmit }: AttendanceFormProps) {
   const form = useForm<AttendanceFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       status: attendance?.status || AttendanceStatus.PRESENT,
-      studentId: student.id,
-      startTime: attendance?.startTime || new Date().toISOString(),
+      studentId: attendance.student.id,
+      // startTime: attendance?.startTime || new Date().toISOString(),
     },
   });
 
+  const handleError = (errors: Record<string, any>) => {
+    console.error("Form validation errors:", errors);
+  };
+
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit, handleError)}
+        className="space-y-4"
+      >
         <FormField
           control={form.control}
           name="status"
           render={({ field }) => (
             <FormItem>
               <FormLabel>
-                Attendance Status for {student.firstName} {student.lastName}
+                Attendance Status for {attendance.student.firstName}{" "}
+                {attendance.student.lastName}
               </FormLabel>
               <FormControl>
                 <Select

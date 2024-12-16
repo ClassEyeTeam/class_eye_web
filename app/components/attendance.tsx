@@ -1,81 +1,38 @@
-"use client";
-
-import { useState } from "react";
-import { UniversalDialog } from "~/components/dialog";
-import { AttendanceForm } from "~/components/forms/attendance-form";
 import { attendanceColumns } from "~/components/table/attendance-columns";
 import { DataTable } from "~/components/table/data-table";
-import { Button } from "~/components/ui/button";
-import { Attendance, Student, testStudents } from "~/lib/types";
+import { useAppSelector } from "~/store/hooks";
+import { AttendanceState } from "~/store/students/attendanceSlice";
+interface AttendanceComponentProps {
+  optionId: number;
+  sessionId: number;
+}
+const AttendanceComponent = ({
+  optionId,
+  sessionId,
+}: AttendanceComponentProps) => {
+  const { attendances, loading } = useAppSelector(
+    (state: { attendance: AttendanceState }) => state.attendance
+  );
 
-const AttendanceComponent = () => {
-  const [students, setStudents] = useState(testStudents);
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-  const handleCreateAttendance = (values: Partial<Attendance>) => {
-    if (selectedStudent) {
-      const updatedStudents = students.map((student) => {
-        if (student.id === selectedStudent.id) {
-          return {
-            ...student,
-            attendances: [
-              ...student.attendances,
-              {
-                id: Math.max(0, ...student.attendances.map((a) => a.id)) + 1,
-                ...values,
-                studentId: student.id,
-              } as Attendance,
-            ],
-          };
-        }
-        return student;
-      });
-      setStudents(updatedStudents);
-      setIsCreateDialogOpen(false);
-      setSelectedStudent(null);
-    }
-  };
+  const tableColumns = attendanceColumns({
+    sessionId: sessionId,
+    data: attendances,
+  });
 
   return (
     <div>
       <h1 className="text-2xl font-bold mb-5">Student Attendance</h1>
       <DataTable
-        columns={attendanceColumns}
-        data={students}
+        columns={tableColumns}
+        data={attendances}
         filterColumn="lastName"
-        createElement={
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
-            Create New Attendance
-          </Button>
-        }
+        createElement={<></>}
+        sessionId={sessionId}
       />
-      <UniversalDialog
-        trigger={<></>}
-        title="Create Attendance"
-        isOpen={isCreateDialogOpen}
-        onOpenChange={setIsCreateDialogOpen}
-      >
-        {selectedStudent ? (
-          <AttendanceForm
-            student={selectedStudent}
-            onSubmit={handleCreateAttendance}
-          />
-        ) : (
-          <div>
-            <h2 className="text-lg font-semibold mb-4">Select a Student</h2>
-            {students.map((student) => (
-              <Button
-                key={student.id}
-                onClick={() => setSelectedStudent(student)}
-                className="mr-2 mb-2"
-              >
-                {student.firstName} {student.lastName}
-              </Button>
-            ))}
-          </div>
-        )}
-      </UniversalDialog>
     </div>
   );
 };
