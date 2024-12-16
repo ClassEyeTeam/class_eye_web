@@ -1,27 +1,13 @@
-"use client";
-
-import { Card, CardContent } from "@/components/ui/card";
-import { useState } from "react";
-import { DateRange } from "react-day-picker";
-import { AttendanceChart } from "~/components/statistics/AttendanceChart";
+import { useEffect } from "react";
 import { SummaryCard } from "~/components/statistics/SummaryCard";
 import { useAttendanceData } from "~/hooks/useAttendanceData";
-import { formatDateRange } from "~/lib/utils";
 
 export default function AttendanceDashboard() {
-  const { dateRange, setDateRange, attendanceData, summary } =
-    useAttendanceData();
-  const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>({
-    from: dateRange[0],
-    to: dateRange[1],
-  });
-
-  const handleApplyDateRange = () => {
-    if (tempDateRange?.from && tempDateRange?.to) {
-      setDateRange([tempDateRange.from, tempDateRange.to]);
-    }
-  };
-
+  const { summary, dateRange } = useAttendanceData();
+  console.log(dateRange);
+  useEffect(() => {
+    console.log("dateRange", dateRange);
+  }, [dateRange]);
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Attendance Dashboard</h1>
@@ -32,33 +18,7 @@ export default function AttendanceDashboard() {
         <SummaryCard title="Total Present" value={summary.totalPresent} />
       </div>
 
-      <div className="grid gap-6 md:grid-cols-[300px,1fr]">
-        <Card className="h-fit">
-          <CardContent className="p-4">
-            <p className="text-sm font-medium mb-2">Selected Range:</p>
-            <p className="text-sm mb-4">
-              {formatDateRange(dateRange[0], dateRange[1])}
-            </p>
-            {/* <Calendar
-              initialFocus
-              mode="range"
-              defaultMonth={tempDateRange?.from}
-              selected={tempDateRange}
-              onSelect={setTempDateRange}
-              numberOfMonths={1}
-              className="w-full"
-            />
-            <Button
-              className="w-full mt-4 bg-black text-white hover:bg-gray-800"
-              onClick={handleApplyDateRange}
-              disabled={!tempDateRange?.from || !tempDateRange?.to}
-            >
-              Apply Date Range
-            </Button> */}
-          </CardContent>
-        </Card>
-        <AttendanceChart data={attendanceData} />
-      </div>
+      <div className="">{/* <AttendanceChart data={attendanceData} /> */}</div>
     </div>
   );
 }
