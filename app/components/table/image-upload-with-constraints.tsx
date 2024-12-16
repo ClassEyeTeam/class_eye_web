@@ -74,8 +74,14 @@ export default function ImageUploadWithStudentId({
     setIsLoading(true);
     const formData = new FormData();
     formData.append("student_id", studentId.toString());
-    Array.from(data.images).forEach((file, index) => {
-      formData.append(`image${index + 1}`, file);
+
+    // Create an array of images
+    const imagesArray = Array.from(data.images);
+    formData.append("images", JSON.stringify(imagesArray));
+
+    // Append each file to formData
+    imagesArray.forEach((file, index) => {
+      formData.append(`images`, file);
     });
 
     try {
@@ -87,7 +93,7 @@ export default function ImageUploadWithStudentId({
       console.log("Upload response:", response.data);
       toast({
         title: "Success",
-        description: `${data.images.length} images uploaded successfully for student ID: ${studentId}.`,
+        description: `${imagesArray.length} images uploaded successfully for student ID: ${studentId}.`,
       });
       setOpen(false);
       reset();
