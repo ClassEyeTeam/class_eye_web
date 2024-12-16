@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, Pencil } from "lucide-react";
 import { useState } from "react";
-import { Attendance, AttendanceStatus } from "~/lib/types";
+import { Attendance } from "~/lib/types";
 import { useAppDispatch } from "~/store/hooks";
 import { updateAttendance } from "~/store/students/attendanceSlice";
 import { UniversalDialog } from "../dialog";
@@ -74,10 +74,7 @@ export const attendanceColumns = ({
           updateAttendance({
             id: attendance.id,
             attendance: {
-              startTime:
-                attendance.status == AttendanceStatus.NOT_RECORDED
-                  ? new Date().toISOString()
-                  : attendance.startTime,
+              startTime: new Date().toISOString(),
               id: attendance.id,
               sessionId: sessionId,
               ...values,
