@@ -1,4 +1,3 @@
-// src/auth/authService.ts
 import axios from "axios";
 import { User, UserManager, WebStorageStateStore } from "oidc-client-ts";
 import { authConfig } from "./authConfig";
@@ -62,6 +61,17 @@ class AuthService {
     } catch (error) {
       console.error("Error handling callback:", error);
       throw error;
+    }
+  }
+
+  public async refreshToken(): Promise<User | null> {
+    try {
+      if (!this.userManager) return null;
+      const user = await this.userManager.signinSilent();
+      return user;
+    } catch (error) {
+      console.error("Error refreshing token:", error);
+      return null;
     }
   }
 }

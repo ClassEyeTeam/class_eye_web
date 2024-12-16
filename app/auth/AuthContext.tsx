@@ -28,7 +28,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       try {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
+          console.log("User roles:", parsedUser.profile.groups);
+          console.log("User info:", parsedUser.profile);
         }
       } finally {
         setLoading(false);
@@ -47,6 +50,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (user) {
         localStorage.setItem("user", JSON.stringify(user));
         setUser(user);
+        console.log("User roles:", user.profile.groups);
+        console.log("User info:", user.profile);
       }
     } finally {
       setLoading(false);

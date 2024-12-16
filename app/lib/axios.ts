@@ -1,4 +1,3 @@
-// src/lib/axios.ts
 import axios from "axios";
 import { authService } from "~/auth/authService";
 
@@ -18,7 +17,6 @@ api.interceptors.request.use(
       const user = window.localStorage.getItem("user");
       if (user) {
         const { access_token } = JSON.parse(user);
-        console.log("access_token", access_token);
         config.headers.Authorization = `Bearer ${access_token}`;
       }
     }
@@ -32,10 +30,18 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response?.status === 401 && typeof window !== "undefined") {
-      window.localStorage.removeItem("user");
-      authService.login();
-
-      //window.location.href = '/login';
+      try {
+        const user = await authService.refreshToken();
+        if (user) {
+          localStorage.setItem("user", JSON.stringify(user));
+          error.config.headers.Authorization = `Bearer ${user.access_token}`;
+          return axios(error.config);
+        }
+      } catch (refreshError) {
+        console.error("Error refreshing token:", refreshError);
+        window.localStorage.removeItem("user");
+        authService.login();
+      }
     }
     return Promise.reject(error);
   }
