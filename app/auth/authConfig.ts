@@ -8,6 +8,8 @@ export const authConfig: UserManagerSettings = {
   post_logout_redirect_uri: "http://localhost:5173",
   response_type: "code",
   scope: "openid email phone",
+  automaticSilentRenew: true,
+  loadUserInfo: true,
   metadata: {
     issuer: "https://cognito-idp.eu-west-3.amazonaws.com/eu-west-3_H1UTyevos",
     authorization_endpoint: "https://eu-west-3h1utyevos.auth.eu-west-3.amazoncognito.com/oauth2/authorize",
