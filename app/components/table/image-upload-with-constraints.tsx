@@ -11,7 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageUp, Loader2, UploadIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "~/hooks/use-toast";
@@ -23,11 +23,9 @@ const imageUploadSchema = z.object({
       (value) => value instanceof FileList,
       "Please select images"
     )
-    .refine((files) => files.length >= 3 && files.length <= 5, {
-      message: "Please select between 3 and 5 images.",
-    })
     .refine(
       (files) =>
+        files &&
         Array.from(files).every((file) => file.type.startsWith("image/")),
       {
         message: "All files must be images.",
@@ -36,14 +34,17 @@ const imageUploadSchema = z.object({
 });
 
 type ImageUploadSchema = z.infer<typeof imageUploadSchema>;
+
 interface ImageUploadWithStudentIdProps {
   studentId: number;
 }
+
 export default function ImageUploadWithStudentId({
   studentId,
 }: ImageUploadWithStudentIdProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
 
   const {
     register,
@@ -51,11 +52,19 @@ export default function ImageUploadWithStudentId({
     formState: { errors },
     reset,
     setValue,
+    trigger,
   } = useForm<ImageUploadSchema>({
     resolver: zodResolver(imageUploadSchema),
   });
 
   const API_ENDPOINT = `${import.meta.env.VITE_API_URL_DETECTION}/students/add`;
+
+  useEffect(() => {
+    if (selectedFiles) {
+      setValue("images", selectedFiles);
+      trigger("images");
+    }
+  }, [selectedFiles, setValue, trigger]);
 
   const onSubmit: SubmitHandler<ImageUploadSchema> = async (data) => {
     setIsLoading(true);
@@ -78,6 +87,7 @@ export default function ImageUploadWithStudentId({
       });
       setOpen(false);
       reset();
+      setSelectedFiles(null);
     } catch (error) {
       console.error("Upload error:", error);
       toast({
@@ -93,7 +103,7 @@ export default function ImageUploadWithStudentId({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      setValue("images", files);
+      setSelectedFiles(files);
     }
   };
 
@@ -117,7 +127,11 @@ export default function ImageUploadWithStudentId({
                 className="flex cursor-pointer items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
               >
                 <UploadIcon className="h-5 w-5 text-gray-400" />
-                <span>Select 3-5 files</span>
+                <span>
+                  {selectedFiles
+                    ? `${selectedFiles.length} file(s) selected`
+                    : "Select 3-5 files"}
+                </span>
                 <input
                   id="images"
                   type="file"

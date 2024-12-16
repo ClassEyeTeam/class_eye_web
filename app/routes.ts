@@ -11,6 +11,7 @@ export default [
   route("callback", "routes/callback.tsx"),
   layout("routes/dashboard/dashboard-layout.tsx", [
     route("university", "routes/dashboard/university.tsx"),
+    route("statistics", "routes/students/statistics.tsx"),
   ]),
   layout("routes/university/layout.tsx", [
     route("university/department", "routes/university/department.tsx"),
@@ -22,6 +23,5 @@ export default [
     route("university/assignment", "routes/university/assignment.tsx"),
     route("students", "routes/students/students.tsx"),
     route("sessions", "routes/students/sessions.tsx"),
-    route("statistics", "routes/students/statistics.tsx"),
   ]),
 ] satisfies RouteConfig;

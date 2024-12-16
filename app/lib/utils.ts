@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 
+import { format } from "date-fns";
 import { twMerge } from "tailwind-merge";
 import { Session } from "./types";
 
@@ -33,4 +34,8 @@ export const formatDate = (date: Date) => {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
     date.getDate()
   )}T${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
+};
+
+export const formatDateRange = (start: Date, end: Date) => {
+  return `${format(start, "MMM d, yyyy")} - ${format(end, "MMM d, yyyy")}`;
 };
