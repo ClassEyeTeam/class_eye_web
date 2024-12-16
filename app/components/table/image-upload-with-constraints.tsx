@@ -11,7 +11,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ImageUp, Loader2, UploadIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "~/hooks/use-toast";
@@ -23,6 +23,9 @@ const imageUploadSchema = z.object({
       (value) => value instanceof FileList,
       "Please select images"
     )
+    .refine((files) => files && files.length >= 3 && files.length <= 5, {
+      message: "Please select between 3 and 5 images.",
+    })
     .refine(
       (files) =>
         files &&
@@ -44,7 +47,8 @@ export default function ImageUploadWithStudentId({
 }: ImageUploadWithStudentIdProps) {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
+  const [selectedFileCount, setSelectedFileCount] = useState(0);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -60,11 +64,11 @@ export default function ImageUploadWithStudentId({
   const API_ENDPOINT = `${import.meta.env.VITE_API_URL_DETECTION}/students/add`;
 
   useEffect(() => {
-    if (selectedFiles) {
-      setValue("images", selectedFiles);
+    if (selectedFileCount > 0) {
+      setValue("images", fileInputRef.current?.files as FileList);
       trigger("images");
     }
-  }, [selectedFiles, setValue, trigger]);
+  }, [selectedFileCount, setValue, trigger]);
 
   const onSubmit: SubmitHandler<ImageUploadSchema> = async (data) => {
     setIsLoading(true);
@@ -87,7 +91,10 @@ export default function ImageUploadWithStudentId({
       });
       setOpen(false);
       reset();
-      setSelectedFiles(null);
+      setSelectedFileCount(0);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     } catch (error) {
       console.error("Upload error:", error);
       toast({
@@ -103,7 +110,7 @@ export default function ImageUploadWithStudentId({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      setSelectedFiles(files);
+      setSelectedFileCount(files.length);
     }
   };
 
@@ -128,8 +135,8 @@ export default function ImageUploadWithStudentId({
               >
                 <UploadIcon className="h-5 w-5 text-gray-400" />
                 <span>
-                  {selectedFiles
-                    ? `${selectedFiles.length} file(s) selected`
+                  {selectedFileCount > 0
+                    ? `${selectedFileCount} file(s) selected`
                     : "Select 3-5 files"}
                 </span>
                 <input
@@ -140,6 +147,7 @@ export default function ImageUploadWithStudentId({
                   className="sr-only"
                   {...register("images")}
                   onChange={handleFileChange}
+                  ref={fileInputRef}
                 />
               </Label>
             </div>
