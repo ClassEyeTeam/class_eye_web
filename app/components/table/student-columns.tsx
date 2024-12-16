@@ -8,6 +8,7 @@ import { DeleteConfirmation } from "../delete-confirmation";
 import { UniversalDialog } from "../dialog";
 import { StudentForm } from "../forms/student-form";
 import { Button } from "../ui/button";
+import ImageUpload from "./image-upload-with-constraints";
 
 export const studentColumns: ColumnDef<Student>[] = [
   {
@@ -22,10 +23,6 @@ export const studentColumns: ColumnDef<Student>[] = [
     header: "Email",
     accessorKey: "email",
   },
-  // {
-  //   header: "Option ID",
-  //   accessorKey: "optionId",
-  // },
   {
     id: "actions",
     accessorKey: "Actions",
@@ -89,6 +86,7 @@ export const studentColumns: ColumnDef<Student>[] = [
               }}
             />
           </UniversalDialog>
+          <ImageUpload studentId={row.original.id} />
         </div>
       );
     },

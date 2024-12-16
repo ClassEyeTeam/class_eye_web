@@ -34,21 +34,6 @@ export const getAttendances = createAsyncThunk(
   }
 );
 
-// export const createAttendance = createAsyncThunk(
-//   "attendances/createAttendance",
-//   async (attendance: Partial<Attendance>, { rejectWithValue }) => {
-//     try {
-//       const response = await api.post<Attendance>(API_ENDPOINT, attendance);
-//       return response.data;
-//     } catch (error) {
-//       if (isAxiosError(error) && error.response) {
-//         return rejectWithValue(error.response.data);
-//       }
-//       throw error;
-//     }
-//   }
-// );
-
 export const updateAttendance = createAsyncThunk(
   "attendances/updateAttendance",
   async (
@@ -113,22 +98,6 @@ const attendanceSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
-      // Create Attendance
-      // .addCase(createAttendance.pending, (state) => {
-      //   state.loading = true;
-      //   state.error = null;
-      // })
-      // .addCase(
-      //   createAttendance.fulfilled,
-      //   (state, action: PayloadAction<Attendance>) => {
-      //     state.attendances.push(action.payload);
-      //     state.loading = false;
-      //   }
-      // )
-      // .addCase(createAttendance.rejected, (state, action) => {
-      //   state.loading = false;
-      //   state.error = action.payload as string;
-      // })
       // Update Attendance
       .addCase(updateAttendance.pending, (state) => {
         state.loading = true;
