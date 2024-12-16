@@ -10,7 +10,6 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { NavMain } from "~/components/nav-bar/nav-main";
-import { NavProjects } from "~/components/nav-bar/nav-projects";
 import { LeftBarData } from "~/lib/data";
 
 export function SidebarLeft({
@@ -37,7 +36,6 @@ export function SidebarLeft({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={LeftBarData.navMain} />
-        <NavProjects projects={LeftBarData.projects} />
       </SidebarContent>
     </Sidebar>
   );

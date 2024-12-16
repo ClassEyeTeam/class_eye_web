@@ -1,24 +1,42 @@
 import { useEffect } from "react";
+import { AttendanceChart } from "~/components/statistics/AttendanceChart";
 import { SummaryCard } from "~/components/statistics/SummaryCard";
-import { useAttendanceData } from "~/hooks/useAttendanceData";
+import { useAppDispatch, useAppSelector } from "~/store/hooks";
+import { getStatistics } from "~/store/statisticsSlice";
+import { RootState } from "~/store/store";
 
 export default function AttendanceDashboard() {
-  const { summary, dateRange } = useAttendanceData();
-  console.log(dateRange);
+  const dispatch = useAppDispatch();
+
+  // Access statistics state from Redux store
+  const { attendanceData, loading, error, statistics, dateRange } =
+    useAppSelector((state: RootState) => state.statistics);
+
   useEffect(() => {
-    console.log("dateRange", dateRange);
-  }, [dateRange]);
+    dispatch(getStatistics());
+  }, [dispatch]);
+
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Attendance Dashboard</h1>
 
-      <div className="grid gap-6 md:grid-cols-3 mb-6">
-        <SummaryCard title="Total Sessions" value={summary.totalSessions} />
-        <SummaryCard title="Total Attendance" value={summary.totalAttendance} />
-        <SummaryCard title="Total Present" value={summary.totalPresent} />
-      </div>
+      {loading && <p>Loading...</p>}
+      {error && <p className="text-red-500">{error}</p>}
 
-      <div className="">{/* <AttendanceChart data={attendanceData} /> */}</div>
+      {statistics && (
+        <div className="grid gap-6 md:grid-cols-3 mb-6">
+          <SummaryCard
+            title="Total Sessions"
+            value={statistics.totalSessions}
+          />
+          <SummaryCard title="Total Present" value={statistics.presentCount} />
+          <SummaryCard title="Total Absent" value={statistics.absentCount} />
+        </div>
+      )}
+
+      <div>
+        <AttendanceChart data={attendanceData} />
+      </div>
     </div>
   );
 }

@@ -86,7 +86,9 @@ export const studentColumns: ColumnDef<Student>[] = [
               }}
             />
           </UniversalDialog>
-          <ImageUpload studentId={row.original.id} />
+          {row.original.faceDetectionEnabled ?? (
+            <ImageUpload studentId={row.original.id} />
+          )}
         </div>
       );
     },

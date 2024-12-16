@@ -10,10 +10,10 @@ import {
 import { Provider } from "react-redux";
 import type { Route } from "./+types/root";
 import stylesheet from "./app.css?url";
+import { AuthProvider } from "./auth/AuthContext";
 import { ThemeProvider } from "./components/theme-provider";
 import { Toaster } from "./components/ui/toaster";
 import { store } from "./store/store";
-import { AuthProvider } from "./auth/AuthContext";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },

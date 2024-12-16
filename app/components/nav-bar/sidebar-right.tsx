@@ -1,6 +1,5 @@
 import * as React from "react";
-
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
 import { NavUser } from "~/components/nav-bar/nav-user";
 import { Button } from "~/components/ui/button";
@@ -11,25 +10,32 @@ import {
   SidebarHeader,
   SidebarSeparator,
 } from "~/components/ui/sidebar";
-import { useAttendanceData } from "~/hooks/useAttendanceData";
-import { RightBarData } from "~/lib/data";
-// This is sample data.
+import { useAppDispatch, useAppSelector } from "~/store/hooks";
+import { setDateRange } from "~/store/statisticsSlice";
+import { RootState } from "~/store/store";
 
 export function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const { dateRange, setDateRange, attendanceData, summary } =
-    useAttendanceData();
+  const dispatch = useAppDispatch();
+  const { dateRange } = useAppSelector((state: RootState) => state.statistics);
+
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>({
     from: dateRange[0],
     to: dateRange[1],
   });
 
+  // Sync tempDateRange with Redux dateRange when it changes
+  useEffect(() => {
+    setTempDateRange({ from: dateRange[0], to: dateRange[1] });
+  }, [dateRange]);
+
   const handleApplyDateRange = () => {
     if (tempDateRange?.from && tempDateRange?.to) {
-      setDateRange([tempDateRange.from, tempDateRange.to]);
+      dispatch(setDateRange([tempDateRange.from, tempDateRange.to]));
     }
   };
+
   return (
     <Sidebar
       collapsible="none"
@@ -37,7 +43,7 @@ export function SidebarRight({
       {...props}
     >
       <SidebarHeader className="h-16 border-b border-sidebar-border flex">
-        <NavUser user={RightBarData.user} />
+        <NavUser />
       </SidebarHeader>
       <SidebarContent>
         <SidebarSeparator className="mx-0" />

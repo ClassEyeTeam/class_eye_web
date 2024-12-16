@@ -54,6 +54,7 @@ export interface Student {
   lastName: string;
   email: string;
   optionId: number;
+  faceDetectionEnabled?: boolean;
 }
 export interface Block {
   id: number;
@@ -118,4 +119,15 @@ export interface Attendance {
   startTime: string;
 }
 
-// Test data
+export interface PresentDayDto {
+  dateTime: string;
+  presentCount: number;
+  absentCount: number;
+}
+
+export interface AttendanceStatistics {
+  totalSessions: number;
+  presentCount: number;
+  absentCount: number;
+  presentDays: PresentDayDto[];
+}
