@@ -3,7 +3,6 @@ import { CalendarConfig, OptionModuleTeacher, Session } from "@/lib/types";
 import { addDays, format, isSameDay, startOfWeek } from "date-fns";
 import { Eye, Pencil, Trash2 } from "lucide-react";
 import React, { useState } from "react";
-import ImageUpload from "~/components/forms/image-upload-with-constraints";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { OptionModuleTeachersState } from "~/store/moduleOptionSlice";
 import { deleteSession } from "~/store/sessionSlice";
@@ -14,6 +13,7 @@ import {
 import AttendanceComponent from "../attendance";
 import { DeleteConfirmation } from "../delete-confirmation";
 import { UniversalDialog } from "../dialog";
+import ImageUploadSession from "../forms/image-upload-session";
 interface CalendarGridProps {
   config: CalendarConfig;
   sessions: Session[];
@@ -217,7 +217,7 @@ export function CalendarGrid({
                             sessionId={session.id}
                           />
                         </UniversalDialog>
-                        <ImageUpload studentId={1} />
+                        <ImageUploadSession sessionId={session.id} />
                       </div>
                     </div>
                   );
