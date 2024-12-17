@@ -11,7 +11,7 @@ import {
   SidebarSeparator,
 } from "~/components/ui/sidebar";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
-import { setDateRange } from "~/store/statisticsSlice";
+import { getStatistics, setDateRange } from "~/store/statisticsSlice";
 import { RootState } from "~/store/store";
 
 export function SidebarRight({
@@ -20,19 +20,30 @@ export function SidebarRight({
   const dispatch = useAppDispatch();
   const { dateRange } = useAppSelector((state: RootState) => state.statistics);
 
+  // Convert timestamps to Date objects
+  const fromDate = new Date(dateRange[0]);
+  const toDate = new Date(dateRange[1]);
+
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>({
-    from: dateRange[0],
-    to: dateRange[1],
+    from: fromDate,
+    to: toDate,
   });
 
   // Sync tempDateRange with Redux dateRange when it changes
   useEffect(() => {
-    setTempDateRange({ from: dateRange[0], to: dateRange[1] });
+    setTempDateRange({
+      from: new Date(dateRange[0]),
+      to: new Date(dateRange[1]),
+    });
   }, [dateRange]);
 
   const handleApplyDateRange = () => {
     if (tempDateRange?.from && tempDateRange?.to) {
-      dispatch(setDateRange([tempDateRange.from, tempDateRange.to]));
+      // Convert Date objects to timestamps
+      dispatch(
+        setDateRange([tempDateRange.from.getTime(), tempDateRange.to.getTime()])
+      );
+      dispatch(getStatistics({}));
     }
   };
 

@@ -11,7 +11,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { ModulesPerOptionChart } from "~/components/charts/module-option-chart";
 import { TeacherDistributionChart } from "~/components/charts/teacher-distribution-chart";
 import { SidebarLeft } from "~/components/nav-bar/sidebar-left";
@@ -30,7 +30,7 @@ import { getTeachers, TeachersState } from "~/store/teacherSlice";
 
 export default function Page() {
   const dispatch = useAppDispatch();
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+
   const { departments } = useAppSelector(
     (state: { departments: DepartmentsState }) => state.departments
   );

@@ -4,6 +4,7 @@ import TeacherForm from "~/components/forms/teacher-form";
 import { DataTable } from "~/components/table/data-table";
 import { teacherColumns } from "~/components/table/teacher-columns";
 import { Button } from "~/components/ui/button";
+import Loader from "~/components/ui/loading-spinner";
 import { DepartmentsState } from "~/store/departmentSlice";
 
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
@@ -20,6 +21,10 @@ const TeacherPage = () => {
   useEffect(() => {
     dispatch(getTeachers());
   }, [dispatch]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <DataTable

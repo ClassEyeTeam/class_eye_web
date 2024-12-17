@@ -5,6 +5,7 @@ import { DataTable } from "~/components/table/data-table";
 import { studentColumns } from "~/components/table/student-columns";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import Loader from "~/components/ui/loading-spinner";
 import {
   Select,
   SelectContent,
@@ -33,13 +34,12 @@ const OptionModuleTeacherPage = () => {
     (state: { options: OptionsState }) => state.options
   );
 
-  const { students } = useAppSelector(
+  const { students, loading } = useAppSelector(
     (state: { students: StudentState }) => state.students
   );
 
   useEffect(() => {
     dispatch(getOptions());
-    // dispatch(getStudents());
   }, [dispatch]);
 
   const filteredOptions = options.filter((option) =>
@@ -52,6 +52,7 @@ const OptionModuleTeacherPage = () => {
 
   return (
     <div>
+      {loading && <Loader />}
       <DataTable
         columns={studentColumns}
         data={students}
@@ -87,9 +88,7 @@ const OptionModuleTeacherPage = () => {
         }
         createElement={
           <UniversalDialog
-            trigger={
-              <Button disabled={!selectedOption}>Create Assignment</Button>
-            }
+            trigger={<Button disabled={!selectedOption}>Create Student</Button>}
             title="Create Student"
             isOpen={isEditDialogOpen}
             onOpenChange={setIsEditDialogOpen}

@@ -5,6 +5,7 @@ import { DataTable } from "~/components/table/data-table";
 import { optionModuleTeacherColumns } from "~/components/table/option-module-table";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import Loader from "~/components/ui/loading-spinner";
 import {
   Select,
   SelectContent,
@@ -40,7 +41,7 @@ const OptionModuleTeacherPage = () => {
     (state: { departments: DepartmentsState }) => state.departments
   );
 
-  const { optionModuleTeachers } = useAppSelector(
+  const { optionModuleTeachers, loading } = useAppSelector(
     (state: { moduleOption: OptionModuleTeachersState }) => state.moduleOption
   );
 
@@ -67,6 +68,10 @@ const OptionModuleTeacherPage = () => {
         item.option.department.id.toString() === selectedDepartment) &&
       (!selectedOption || item.option.id.toString() === selectedOption)
   );
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <DataTable

@@ -1,26 +1,28 @@
-import { AttendanceData, generateMockData } from "@/lib/mockData";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { isAxiosError } from "axios";
 import { endOfWeek, startOfWeek } from "date-fns";
 import api from "~/lib/axios";
-import { AttendanceStatistics } from "~/lib/types";
+import { AttendanceStatistics, PresentDayDto } from "~/lib/types";
 
 export interface StatisticsState {
-  dateRange: [Date, Date];
-  attendanceData: AttendanceData[];
+  dateRange: [number, number];
+  attendanceData: PresentDayDto[];
   statistics: AttendanceStatistics | null;
   loading: boolean;
   error: string | null;
 }
 
-const initialDateRange: [Date, Date] = (() => {
+// const initialDateRange: [Date, Date] = (() => {
+//   const now = new Date();
+//   return [startOfWeek(now), endOfWeek(now)];
+// })();
+const initialDateRange: [number, number] = (() => {
   const now = new Date();
-  return [startOfWeek(now), endOfWeek(now)];
+  return [startOfWeek(now).getTime(), endOfWeek(now).getTime()];
 })();
-
 const initialState: StatisticsState = {
   dateRange: initialDateRange,
-  attendanceData: generateMockData(initialDateRange[0], initialDateRange[1]),
+  attendanceData: [],
   statistics: null,
   loading: false,
   error: null,
@@ -30,9 +32,28 @@ const API_ENDPOINT = `${import.meta.env.VITE_API_URL_STUDENT}/dashboard`;
 
 export const getStatistics = createAsyncThunk(
   "statistics/getStatistics",
-  async (_, { rejectWithValue }) => {
+  async (
+    params: {
+      studentId?: number;
+      optionId?: number;
+    },
+    { getState, rejectWithValue }
+  ) => {
     try {
-      const response = await api.get(`${API_ENDPOINT}/statistics`);
+      const queryParams = new URLSearchParams();
+      const state = getState() as { statistics: StatisticsState };
+      const { dateRange } = state.statistics;
+      // Add optional parameters to the query string
+      if (params.studentId)
+        queryParams.append("studentId", params.studentId.toString());
+      if (params.optionId)
+        queryParams.append("optionId", params.optionId.toString());
+      queryParams.append("startDate", new Date(dateRange[0]).toISOString());
+      queryParams.append("endDate", new Date(dateRange[1]).toISOString());
+
+      const response = await api.get(
+        `${API_ENDPOINT}/statistics?${queryParams.toString()}`
+      );
       return response.data;
     } catch (error) {
       if (isAxiosError(error) && error.response) {
@@ -47,12 +68,8 @@ const statisticsSlice = createSlice({
   name: "statistics",
   initialState,
   reducers: {
-    setDateRange(state, action: PayloadAction<[Date, Date]>) {
+    setDateRange(state, action: PayloadAction<[number, number]>) {
       state.dateRange = action.payload;
-      state.attendanceData = generateMockData(
-        action.payload[0],
-        action.payload[1]
-      );
     },
   },
 
@@ -65,7 +82,6 @@ const statisticsSlice = createSlice({
     builder.addCase(
       getStatistics.fulfilled,
       (state, action: PayloadAction<AttendanceStatistics>) => {
-        console.log(action.payload);
         state.statistics = action.payload;
         state.loading = false;
       }

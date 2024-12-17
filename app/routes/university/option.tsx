@@ -4,6 +4,7 @@ import OptionForm from "~/components/forms/option-form";
 import { DataTable } from "~/components/table/data-table";
 import { optionColumns } from "~/components/table/option-columns";
 import { Button } from "~/components/ui/button";
+import Loader from "~/components/ui/loading-spinner";
 
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { addOption, getOptions, OptionsState } from "~/store/optionSlice";
@@ -18,6 +19,10 @@ const OptionPage = () => {
   useEffect(() => {
     dispatch(getOptions());
   }, [dispatch]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <DataTable

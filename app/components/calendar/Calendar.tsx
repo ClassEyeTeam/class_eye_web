@@ -25,6 +25,7 @@ import {
   SessionsState,
   updateSession,
 } from "~/store/sessionSlice";
+import Loader from "../ui/loading-spinner";
 import { CalendarGrid } from "./CalendarGrid";
 import { DayPicker } from "./DayPicker";
 import { SessionForm } from "./SessionForm";
@@ -174,9 +175,7 @@ export function Calendar({ config }: CalendarProps) {
       </div>
 
       {loading ? (
-        <div className="flex justify-center items-center h-[300px]">
-          <div className="text-center">Loading...</div>
-        </div>
+        <Loader />
       ) : selectedOption ? (
         <CalendarGrid
           config={config}

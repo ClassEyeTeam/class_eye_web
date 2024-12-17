@@ -120,9 +120,9 @@ export interface Attendance {
 }
 
 export interface PresentDayDto {
-  dateTime: string;
-  presentCount: number;
-  absentCount: number;
+  date: string;
+  present: number;
+  absent: number;
 }
 
 export interface AttendanceStatistics {

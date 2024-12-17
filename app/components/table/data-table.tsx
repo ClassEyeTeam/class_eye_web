@@ -35,7 +35,7 @@ interface DataTableProps<TData, TValue> {
   filterColumn?: string;
   createElement: React.ReactNode;
   filterComponent?: React.ReactNode; // New prop for filter components
-  sessionId: number;
+  sessionId?: number;
 }
 
 export function DataTable<TData, TValue>({

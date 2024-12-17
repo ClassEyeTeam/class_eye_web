@@ -4,6 +4,7 @@ import { DepartmentForm } from "~/components/forms/department-form";
 import { DataTable } from "~/components/table/data-table";
 import { departmentColumns } from "~/components/table/department-columns";
 import { Button } from "~/components/ui/button";
+import Loader from "~/components/ui/loading-spinner";
 
 import {
   addDepartment,
@@ -22,6 +23,9 @@ const Department = () => {
   useEffect(() => {
     dispatch(getDepartments());
   }, [dispatch]);
+  if (loading) {
+    return <Loader />;
+  }
   return (
     <DataTable
       columns={departmentColumns}

@@ -68,7 +68,7 @@ export const updateStudent = createAsyncThunk(
   async (updatedStudent: Student, { rejectWithValue }) => {
     try {
       const response = await api.put<Student>(
-        `${API_ENDPOINT}/${updatedStudent.optionId}`,
+        `${API_ENDPOINT}/${updatedStudent.id}`,
         updatedStudent
       );
       return response.data;
@@ -158,7 +158,7 @@ const studentSlice = createSlice({
         updateStudent.fulfilled,
         (state, action: PayloadAction<Student>) => {
           const index = state.students.findIndex(
-            (student) => student.optionId === action.payload.optionId
+            (student) => student.id === action.payload.id
           );
           if (index !== -1) {
             state.students[index] = action.payload;
@@ -178,7 +178,7 @@ const studentSlice = createSlice({
         deleteStudent.fulfilled,
         (state, action: PayloadAction<number>) => {
           state.students = state.students.filter(
-            (student) => student.optionId !== action.payload
+            (student) => student.id !== action.payload
           );
           state.loading = false;
         }

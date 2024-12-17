@@ -55,21 +55,6 @@ export const updateAttendance = createAsyncThunk(
   }
 );
 
-export const deleteAttendance = createAsyncThunk(
-  "attendances/deleteAttendance",
-  async (id: number, { rejectWithValue }) => {
-    try {
-      await api.delete(`${API_ENDPOINT}/${id}`);
-      return id;
-    } catch (error) {
-      if (isAxiosError(error) && error.response) {
-        return rejectWithValue(error.response.data);
-      }
-      throw error;
-    }
-  }
-);
-
 const attendanceSlice = createSlice({
   name: "attendances",
   initialState,
@@ -116,24 +101,6 @@ const attendanceSlice = createSlice({
         }
       )
       .addCase(updateAttendance.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-      // Delete Attendance
-      .addCase(deleteAttendance.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(
-        deleteAttendance.fulfilled,
-        (state, action: PayloadAction<number>) => {
-          state.attendances = state.attendances.filter(
-            (a) => a.id !== action.payload
-          );
-          state.loading = false;
-        }
-      )
-      .addCase(deleteAttendance.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

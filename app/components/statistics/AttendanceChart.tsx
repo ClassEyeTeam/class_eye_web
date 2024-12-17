@@ -9,17 +9,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-
-interface AttendanceData {
-  date: string;
-  present: number;
-  absent: number;
-  presentPercentage: number;
-  absentPercentage: number;
-}
+import { PresentDayDto } from "~/lib/types";
 
 interface AttendanceChartProps {
-  data: AttendanceData[];
+  data: PresentDayDto[];
 }
 
 const CustomTooltip = ({ active, payload, label }: any) => {

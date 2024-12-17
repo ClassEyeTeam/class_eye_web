@@ -19,6 +19,10 @@ const ModulePage = () => {
     dispatch(getModules());
   }, [dispatch]);
 
+  if (loading) {
+    return <Loader />;
+  }
+
   return (
     <div>
       <DataTable

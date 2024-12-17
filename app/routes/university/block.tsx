@@ -4,6 +4,7 @@ import { BlockForm } from "~/components/forms/block-form";
 import { blockColumns } from "~/components/table/block-column";
 import { DataTable } from "~/components/table/data-table";
 import { Button } from "~/components/ui/button";
+import Loader from "~/components/ui/loading-spinner";
 
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import {
@@ -22,6 +23,10 @@ const Block = () => {
   useEffect(() => {
     dispatch(fetchBlocks());
   }, [dispatch]);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <DataTable

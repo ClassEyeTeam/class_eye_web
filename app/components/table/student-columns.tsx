@@ -6,11 +6,15 @@ import { useAppDispatch } from "~/store/hooks";
 import { deleteStudent, updateStudent } from "~/store/students/studentSlice";
 import { DeleteConfirmation } from "../delete-confirmation";
 import { UniversalDialog } from "../dialog";
+import ImageUpload from "../forms/image-upload-with-constraints";
 import { StudentForm } from "../forms/student-form";
 import { Button } from "../ui/button";
-import ImageUpload from "./image-upload-with-constraints";
 
 export const studentColumns: ColumnDef<Student>[] = [
+  {
+    header: "id",
+    accessorKey: "id",
+  },
   {
     header: "First Name",
     accessorKey: "firstName",
@@ -86,7 +90,7 @@ export const studentColumns: ColumnDef<Student>[] = [
               }}
             />
           </UniversalDialog>
-          {row.original.faceDetectionEnabled ?? (
+          {!row.original.faceDetectionEnabled && (
             <ImageUpload studentId={row.original.id} />
           )}
         </div>

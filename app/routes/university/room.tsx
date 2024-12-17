@@ -12,6 +12,7 @@ import {
 } from "~/components/ui/select";
 
 import { roomColumns } from "~/components/table/room-column";
+import Loader from "~/components/ui/loading-spinner";
 import { Block } from "~/lib/types";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { fetchBlocks } from "~/store/infrastructure/blockSlice";
@@ -40,7 +41,7 @@ const RoomPage = () => {
     : rooms;
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (

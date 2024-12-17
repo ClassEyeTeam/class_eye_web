@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AttendanceChart } from "~/components/statistics/AttendanceChart";
 import { SummaryCard } from "~/components/statistics/SummaryCard";
+import Loader from "~/components/ui/loading-spinner";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { getStatistics } from "~/store/statisticsSlice";
 import { RootState } from "~/store/store";
@@ -9,18 +10,19 @@ export default function AttendanceDashboard() {
   const dispatch = useAppDispatch();
 
   // Access statistics state from Redux store
-  const { attendanceData, loading, error, statistics, dateRange } =
-    useAppSelector((state: RootState) => state.statistics);
+  const { loading, error, statistics } = useAppSelector(
+    (state: RootState) => state.statistics
+  );
 
   useEffect(() => {
-    dispatch(getStatistics());
+    dispatch(getStatistics({}));
   }, [dispatch]);
 
   return (
     <div>
       <h1 className="text-3xl font-bold mb-6">Attendance Dashboard</h1>
 
-      {loading && <p>Loading...</p>}
+      {loading && <Loader />}
       {error && <p className="text-red-500">{error}</p>}
 
       {statistics && (
@@ -35,7 +37,7 @@ export default function AttendanceDashboard() {
       )}
 
       <div>
-        <AttendanceChart data={attendanceData} />
+        {statistics && <AttendanceChart data={statistics.presentDays} />}
       </div>
     </div>
   );

@@ -17,7 +17,6 @@ export const getSessions = createAsyncThunk(
   async (optionId: number, { rejectWithValue }) => {
     try {
       const response = await api.get(`${API_ENDPOINT}/option/${optionId}`);
-      console.log(response.data);
       return response.data;
     } catch (error) {
       if (isAxiosError(error) && error.response) {

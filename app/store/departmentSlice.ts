@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { isAxiosError } from "axios";
-import api from "~/lib/axios"; 
+import api from "~/lib/axios";
 import { Department } from "~/lib/types";
 
 export interface DepartmentsState {
@@ -14,7 +14,6 @@ const API_ENDPOINT = `UNIVERSITY-SERVICE/departments`;
 export const addDepartment = createAsyncThunk(
   "departments/addDepartment",
   async (department: { name: string }, { rejectWithValue }) => {
-    console.log(API_ENDPOINT);
     try {
       const response = await api.post(API_ENDPOINT, department);
       return response.data;
