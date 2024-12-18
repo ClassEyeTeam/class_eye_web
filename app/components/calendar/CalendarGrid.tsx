@@ -5,7 +5,6 @@ import { Eye, Pencil, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { OptionModuleTeachersState } from "~/store/moduleOptionSlice";
-import { deleteSession } from "~/store/sessionSlice";
 import {
   getAttendances,
   resetAttendances,
@@ -17,7 +16,11 @@ import ImageUploadSession from "../forms/image-upload-session";
 interface CalendarGridProps {
   config: CalendarConfig;
   sessions: Session[];
-  onSessionClick: (session: Session | null, clickedDate: Date) => void;
+  onSessionClick: (
+    session: Session | null,
+    clickedDate: Date,
+    isDelete?: boolean
+  ) => void;
   selectedWeek: string;
   selectedOption: number | null;
   selectedDate: Date | null;
@@ -34,6 +37,7 @@ export function CalendarGrid({
   const dispatch = useAppDispatch();
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
+  const [sessionToDelete, setSessionToDelete] = useState<Session | null>(null);
   const hours = [];
   for (let h = config.startHour; h < config.endHour; h++) {
     hours.push(h);
@@ -81,6 +85,11 @@ export function CalendarGrid({
   const weekStart = selectedDate
     ? startOfWeek(selectedDate, { weekStartsOn: 1 })
     : startOfWeek(new Date(), { weekStartsOn: 1 });
+
+  const handleOpenDeleteDialog = (session: Session) => {
+    setSessionToDelete(session);
+    setIsDeleteDialogOpen(true);
+  };
 
   return (
     <div className="grid grid-cols-[auto,1fr,1fr,1fr,1fr,1fr,1fr,1fr] gap-0.5">
@@ -153,7 +162,7 @@ export function CalendarGrid({
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => setIsDeleteDialogOpen(true)}
+                              onClick={() => handleOpenDeleteDialog(session)}
                             >
                               <Trash2 className="h-4 w-4" color="red" />
                             </Button>
@@ -165,10 +174,18 @@ export function CalendarGrid({
                           <DeleteConfirmation
                             itemName={moduleName}
                             itemType="Session"
-                            onCancel={() => setIsDeleteDialogOpen(false)}
-                            onConfirm={() => {
-                              dispatch(deleteSession(session.id));
+                            onCancel={() => {
                               setIsDeleteDialogOpen(false);
+                              setSessionToDelete(null);
+                            }}
+                            onConfirm={() => {
+                              onSessionClick(
+                                sessionToDelete,
+                                new Date(sessionToDelete?.startDateTime || ""),
+                                true
+                              );
+                              setIsDeleteDialogOpen(false);
+                              setSessionToDelete(null);
                             }}
                           />
                         </UniversalDialog>

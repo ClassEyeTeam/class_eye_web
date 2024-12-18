@@ -21,6 +21,7 @@ import { getOptionModuleTeachersForOption } from "~/store/moduleOptionSlice";
 import { getOptions, OptionsState } from "~/store/optionSlice";
 import {
   createSession,
+  deleteSession,
   getSessions,
   SessionsState,
   updateSession,
@@ -86,8 +87,16 @@ export function Calendar({ config }: CalendarProps) {
     if (selectedOption) dispatch(getSessions(selectedOption));
   }, [selectedOption]);
 
-  const handleSessionClick = (session: Session | null, clickedDate: Date) => {
+  const handleSessionClick = (
+    session: Session | null,
+    clickedDate: Date,
+    isDelete?: boolean
+  ) => {
     if (!selectedOption && !session) return;
+    if (isDelete === true && session) {
+      dispatch(deleteSession(session.id));
+      return;
+    }
 
     setSelectedDate(clickedDate);
     if (session) {

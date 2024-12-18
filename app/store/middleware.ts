@@ -5,9 +5,28 @@ import { toast } from "~/hooks/use-toast";
 /**
  * Log a warning and show a toast!
  */
+
+interface RejectedAction {
+  payload: {
+    message?: string;
+    status?: number;
+    error?: string;
+  };
+  error?: {
+    message?: string;
+    data?: {
+      message: string;
+    };
+  };
+  meta?: {
+    arg: any;
+    requestId: string;
+    rejectedWithValue: boolean;
+  };
+}
+
 export const rtkQueryErrorLogger: Middleware =
   (api: MiddlewareAPI) => (next) => (action) => {
-    // RTK Query uses `createAsyncThunk` from redux-toolkit under the hood, so we're able to utilize these matchers!
     if (isRejectedWithValue(action)) {
       console.warn("We got a rejected action!");
       console.error(action);
@@ -15,9 +34,10 @@ export const rtkQueryErrorLogger: Middleware =
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
         description:
-          "data" in action.error
-            ? (action.error.data as { message: string }).message
-            : action.error.message,
+          (action as RejectedAction).payload?.message ||
+          (action.error as { message?: string })?.message ||
+          action.error?.message ||
+          "An unknown error occurred",
       });
     }
 

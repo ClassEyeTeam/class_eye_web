@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { isAxiosError } from "axios";
-import  api  from "~/lib/axios";
+import api from "~/lib/axios";
 import { Block } from "~/lib/types";
 
 export interface BlocksState {
@@ -98,12 +98,14 @@ const blockSlice = createSlice({
 
       .addCase(addBlock.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(addBlock.fulfilled, (state, action) => {
         state.loading = false;
         state.blocks.push(action.payload);
       })
       .addCase(addBlock.rejected, (state, action) => {
+        state.loading = false;
         state.error = action.payload as string;
       })
 
