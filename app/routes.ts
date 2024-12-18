@@ -10,10 +10,10 @@ export default [
   route("login", "routes/login.tsx"),
   route("callback", "routes/callback.tsx"),
   layout("routes/dashboard/dashboard-layout.tsx", [
-    route("university", "routes/dashboard/university.tsx"),
     route("statistics", "routes/students/statistics.tsx"),
   ]),
   layout("routes/university/layout.tsx", [
+    route("university", "routes/dashboard/university.tsx"),
     route("university/department", "routes/university/department.tsx"),
     route("university/block", "routes/university/block.tsx"),
     route("university/room", "routes/university/room.tsx"),

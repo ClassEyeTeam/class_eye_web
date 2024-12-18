@@ -24,9 +24,6 @@ import {
 const OptionModuleTeacherPage = () => {
   const dispatch = useAppDispatch();
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
-    null
-  );
   const [searchOption, setSearchOption] = useState("");
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
 

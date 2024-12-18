@@ -14,6 +14,7 @@ export default function AttendanceDashboard() {
     (state: RootState) => state.statistics
   );
 
+  console.log(statistics);
   useEffect(() => {
     dispatch(getStatistics({}));
   }, [dispatch]);

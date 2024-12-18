@@ -12,10 +12,6 @@ export interface StatisticsState {
   error: string | null;
 }
 
-// const initialDateRange: [Date, Date] = (() => {
-//   const now = new Date();
-//   return [startOfWeek(now), endOfWeek(now)];
-// })();
 const initialDateRange: [number, number] = (() => {
   const now = new Date();
   return [startOfWeek(now).getTime(), endOfWeek(now).getTime()];
