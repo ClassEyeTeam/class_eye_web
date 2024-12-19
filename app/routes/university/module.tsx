@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { UniversalDialog } from "~/components/dialog";
+import Loader from "~/components/ui/loading-spinner";
 import ModuleForm from "~/components/forms/module-form";
 import { DataTable } from "~/components/table/data-table";
 import { moduleColumns } from "~/components/table/module-column";
@@ -7,6 +7,7 @@ import { moduleColumns } from "~/components/table/module-column";
 import { Button } from "~/components/ui/button";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
 import { addModule, getModules, ModulesState } from "~/store/moduleSlice";
+import { UniversalDialog } from "~/components/dialog";
 
 const ModulePage = () => {
   const dispatch = useAppDispatch();
