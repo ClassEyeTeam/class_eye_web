@@ -1,7 +1,6 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { DateRange } from "react-day-picker";
-import { NavUser } from "~/components/nav-bar/nav-user";
 import { Button } from "~/components/ui/button";
 import { Calendar } from "~/components/ui/calendar";
 import { Input } from "~/components/ui/input";
@@ -15,7 +14,6 @@ import {
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
   SidebarSeparator,
 } from "~/components/ui/sidebar";
 import { useAppDispatch, useAppSelector } from "~/store/hooks";
@@ -91,9 +89,6 @@ export function SidebarRight({
       className="sticky hidden lg:flex top-0 h-svh border-l px-2"
       {...props}
     >
-      <SidebarHeader className="h-16 border-b border-sidebar-border flex">
-        <NavUser />
-      </SidebarHeader>
       <SidebarContent>
         <SidebarSeparator className="mx-0" />
 

@@ -29,7 +29,7 @@ export default function DashboardLayout() {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="line-clamp-1 dark:text-gray-200">
-                  University Management & Tracking
+                    University Management & Tracking
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>

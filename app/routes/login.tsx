@@ -1,15 +1,15 @@
 // src/routes/login.tsx
+import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { useAuth } from "../auth/AuthContext";
 import { Button } from "../components/ui/button";
 import {
   Card,
-  CardHeader,
   CardContent,
   CardFooter,
+  CardHeader,
 } from "../components/ui/card";
-import { Loader2 } from "lucide-react";
 
 const Login: React.FC = () => {
   const { login } = useAuth();
@@ -29,7 +29,6 @@ const Login: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
-      <h1>hello word </h1>
       <Card className="w-[350px]">
         <CardHeader className="space-y-1">
           <h2 className="text-2xl font-semibold text-center">Welcome back</h2>

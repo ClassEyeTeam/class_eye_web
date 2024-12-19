@@ -15,7 +15,6 @@ import { useEffect } from "react";
 import { ModulesPerOptionChart } from "~/components/charts/module-option-chart";
 import { TeacherDistributionChart } from "~/components/charts/teacher-distribution-chart";
 import { SidebarLeft } from "~/components/nav-bar/sidebar-left";
-import { SidebarRight } from "~/components/nav-bar/sidebar-right";
 
 import { ModeToggle } from "~/components/nav-bar/mode-toggle";
 import { DepartmentsState, getDepartments } from "~/store/departmentSlice";
@@ -160,7 +159,6 @@ export default function Page() {
           </div>
         </div>
       </SidebarInset>
-      <SidebarRight />
     </SidebarProvider>
   );
 }

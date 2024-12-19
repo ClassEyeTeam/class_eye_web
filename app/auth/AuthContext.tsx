@@ -26,6 +26,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   // console.log(user?.access_token);
 
   useEffect(() => {
+    const syncLogout = (event: StorageEvent) => {
+      if (event.key === "user" && event.newValue === null) {
+        setUser(null);
+        window.location.href = "/login"; // Redirect after logout
+      }
+    };
+    window.addEventListener("storage", syncLogout);
+    return () => window.removeEventListener("storage", syncLogout);
+  }, []);
+
+  useEffect(() => {
     const initAuth = async () => {
       try {
         const storedUser = localStorage.getItem("user");

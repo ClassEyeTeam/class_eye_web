@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NavMain } from "~/components/nav-bar/nav-main";
 import { LeftBarData } from "~/lib/data";
+import { NavUser } from "./nav-user";
 
 export function SidebarLeft({
   ...props
@@ -37,6 +39,9 @@ export function SidebarLeft({
       <SidebarContent>
         <NavMain items={LeftBarData.navMain} />
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser />
+      </SidebarFooter>
     </Sidebar>
   );
 }

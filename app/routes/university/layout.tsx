@@ -41,7 +41,7 @@ export default function Page() {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <BreadcrumbPage className="line-clamp-1">
-                  University Management & Tracking
+                    University Management & Tracking
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>

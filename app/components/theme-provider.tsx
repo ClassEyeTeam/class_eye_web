@@ -24,7 +24,6 @@ export function ThemeProvider({
   children,
   defaultTheme = "system",
   storageKey = "vite-ui-theme",
-  ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
     if (typeof window !== "undefined" && window.localStorage) {
@@ -34,15 +33,18 @@ export function ThemeProvider({
   });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const root = window.document.documentElement;
-      root.classList.remove("light", "dark");
-      root.classList.add(theme);
-    }
-  }, [theme]);
+    const root = window.document.documentElement;
+
+    // Apply the theme to the root element
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+
+    // Persist the theme in localStorage
+    localStorage.setItem(storageKey, theme);
+  }, [theme, storageKey]);
 
   return (
-    <ThemeProviderContext.Provider value={{ theme, setTheme }} {...props}>
+    <ThemeProviderContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeProviderContext.Provider>
   );

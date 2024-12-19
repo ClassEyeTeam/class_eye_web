@@ -33,11 +33,7 @@ export const rtkQueryErrorLogger: Middleware =
       toast({
         variant: "destructive",
         title: "Uh oh! Something went wrong.",
-        description:
-          (action as RejectedAction).payload?.message ||
-          (action.error as { message?: string })?.message ||
-          action.error?.message ||
-          "An unknown error occurred",
+        description: action.payload?.message || "An unknown error occurred",
       });
     }
 
