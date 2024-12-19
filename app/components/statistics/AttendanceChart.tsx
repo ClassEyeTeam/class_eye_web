@@ -29,10 +29,12 @@ const CustomTooltip = ({ active, payload, label }: any) => {
           })}
         </p>
         <p className="text-sm text-teal-600">
-          Present: {data.present} ({data.presentPercentage}%)
+          Present: {data.present} (
+          {((data.present * 100) / (data.present + data.absent)).toFixed(2)}%)
         </p>
         <p className="text-sm text-coral-600">
-          Absent: {data.absent} ({data.absentPercentage}%)
+          Absent: {data.absent}{" "}
+          {((data.absent * 100) / (data.present + data.absent)).toFixed(2)}%)
         </p>
       </div>
     );
